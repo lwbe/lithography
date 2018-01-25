@@ -54,7 +54,7 @@ On modifie en suite **settings.py** qui se trouve dans **\~/Devel/Python/Django/
 
    'masks', 
 
-dans la liste **INSTALLED_APPS.
+dans la liste **INSTALLED_APPS**.
 
 On rajoute aussi
 
@@ -96,11 +96,11 @@ Pour le test on lance manage.py avec la commande runserver mais il se plaint
     You have 13 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.    
     Run 'python manage.py migrate' to apply them.
 
- On pointe un navigateur vers http://localhost:8000/ et on voit bien le **hello world** de la vue.
+On pointe un navigateur vers http://localhost:8000/ et on voit bien le **hello world** de la vue.
 
- Fin du premier test
+Ce qui nous amène à la fin du premier test
 
- Questions à résoudre:
+Questions à résoudre:
 
 - passage en django 2.0?
 - mettre ce code sous github et comment le deployer (pip install?) bien détaillé la différence entre l'utilisation de git pour le développement et pour le deploiement avec le setup.py qui va bien.
