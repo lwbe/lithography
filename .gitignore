@@ -1,0 +1,4 @@
+*.pyc
+*NOGIT*
+*~
+db.sqlite3
