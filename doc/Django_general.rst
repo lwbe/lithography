@@ -105,4 +105,24 @@ Questions à résoudre:
 - passage en django 2.0?
 - mettre ce code sous github et comment le deployer (pip install?) bien détaillé la différence entre l'utilisation de git pour le développement et pour le deploiement avec le setup.py qui va bien.
 
-  
+Utilisation de jquery-file-upload
+--------------------------------
+Nous allons maintenant regarder comment utiliser un plugin jquery, jquery-file-upload pour televerser des images à partir d'une page. Ensuite nous verrons comment faire un modéle pour les masques qui permette d'utiliser ce plugin.
+
+Je suis https://simpleisbetterthancomplex.com/tutorial/2016/11/22/django-multiple-file-upload-using-ajax.html
+
+On ajoute:
+
+..code-block:: python
+
+  from django.conf import settings
+  from django.conf.urls.static import static
+  if settings.DEBUG:
+      urlpatterns += static(settings.Medi_URL,document_root=settings.MEDIA_ROOT)
+
+Dans le fichier *lithography/urls.py*
+
+Internationnalisation
+---------------------
+
+Il faut verifier que la variable  soit mise à True dans le fichier **lithography/settings.py'USE_I18N = True

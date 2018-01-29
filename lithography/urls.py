@@ -22,3 +22,9 @@ urlpatterns = [
     url(r'^$',views.home,name='home'),
     url(r'^admin/', admin.site.urls),
 ]
+
+#added to use the media in debug mode
+from django.conf import settings
+from django.conf.urls.static import static
+if settings.DEBUG:
+    urlpatterns += static(settings.Medi_URL,document_root=settings.MEDIA_ROOT)
