@@ -1,10 +1,13 @@
 from django.db import models
 
+from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 class Mask(models.Model):
-    name=
+    name   = models.CharField(_("Nom"),max_length=100,default='')
+    number = models.IntegerField(_("Numero"),default=1)
 
+comment = """
 class Masques(models.Model):
     choix_polarite=(('---','Select'),('Positif','Positif'),('Negatif','Negatif'))
     #choix_local = (('---','Select'),('Armoiré 1','Armoire1'),('Armoire 2','Armoire2'))
@@ -28,13 +31,13 @@ class Masques(models.Model):
     
     def __unicode__(self):
         return self.nom  
-
+"""
 
 
 
 class Image(models.Model):
-    masque = models.ForeignKey(Masques)
-    image  = models.ImageField("Image(s)",default='',blank=True,null=True,upload_to="images/")
+    masque = models.ForeignKey(Mask)
+    image  = models.ImageField(_("Image"),default='',blank=True,null=True,upload_to="images/")
          
     def __unicode__(self):
-         return self.masque.num
+         return self.Mask.number

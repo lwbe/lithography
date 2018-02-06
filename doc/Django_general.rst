@@ -124,5 +124,10 @@ Dans le fichier *lithography/urls.py*
 
 Internationnalisation
 ---------------------
+Voir la doc officielle de django mais aussi https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-django/l-internationalisation-1
+
 
 Il faut verifier que la variable  soit mise à True dans le fichier **lithography/settings.py'USE_I18N = True
+
+Dans les modèles il faut utiliser ugettext_lazy pour que l'évaluation se fasse au run time et non a l'initialisation car on contraindrai la chaine au démarrage de l'application.
+from django.utils.translation import ugettext_lazy as _
