@@ -1,9 +1,12 @@
 Django==1.11
 docutils==0.14
+pandoc==1.0.2
 pdfrw==0.4
 Pillow==5.0.0
+ply==3.10
 Pygments==2.2.0
 pytz==2017.3
 reportlab==3.4.0
 ## FIXME: could not find svn URL in dependency_links for this package:
 rst2pdf===0.93.dev-r0
+uWSGI==2.0.15

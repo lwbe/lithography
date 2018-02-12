@@ -7,6 +7,10 @@ class Mask(models.Model):
     name   = models.CharField(_("Nom"),max_length=100,default='')
     number = models.IntegerField(_("Numero"),default=1)
 
+
+    def __str__(self):
+        return self.number
+
 comment = """
 class Masques(models.Model):
     choix_polarite=(('---','Select'),('Positif','Positif'),('Negatif','Negatif'))
@@ -36,8 +40,11 @@ class Masques(models.Model):
 
 
 class Image(models.Model):
-    masque = models.ForeignKey(Mask)
+    mask = models.ForeignKey(Mask)
     image  = models.ImageField(_("Image"),default='',blank=True,null=True,upload_to="images/")
          
     def __unicode__(self):
-         return self.Mask.number
+         return self.mask.number
+
+    def __str__(self):
+        return self.mask.number
