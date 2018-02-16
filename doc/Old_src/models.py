@@ -5,31 +5,30 @@ from django.db import models
 from django.forms import ModelForm
 from django.utils import timezone
 
-from django.utils.translation import ugettext_lazy as _
+# Create your models here.
 
-
-class Usage(models.Model):
-    nom        = models.CharField(_("Type d'utilisation"),max_length=100)
+class Usages(models.Model):
+    nom = models.CharField(max_length=100)
     
     def __unicode__(self):
         return self.nom   
     
-class Type_of_motif(models.Model):
-    nom        = models.CharField(_("Nom du motif"),max_length=100)
-    nb_dim     = models.IntegerField(_("Nombre de  dimension"))
-    description= models.TextField(_("Description"))
+class MotifsTypes(models.Model):
+    nom = models.CharField(max_length=100)
+    nb_dim=models.IntegerField("Nbre dimensions")
+    description=models.TextField("Description")
     
     def __unicode__(self):
         return self.nom 
 
-class Localisation(models.Model ):
-    nom = models.CharField(_("Localisation"),max_length=100)
+class Localisations(models.Model ):
+    nom = models.CharField("Local",max_length=100)
     
     def __unicode__(self) :
         return self.nom 
 
 class Motifs(models.Model) :
-    typemotif   = models.ForeignKey(MotifsTypes)
+    typemotif=models.ForeignKey(MotifsTypes)
     dim1=models.FloatField("Dim 1",default=0,)
     dim2=models.FloatField("Dim 2",default=0,blank=True,null=True)
     dim3=models.FloatField("Dim 3",default=0,blank=True,null=True)
