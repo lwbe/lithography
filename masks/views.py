@@ -14,6 +14,55 @@ from .models import MotifType,Motif,Mask,Image,Usage,Localisation,Manufacturer
 from .forms import MotifTypeForm,MotifTypeDataForm,MotifModelForm,MaskModelForm,ImageModelForm
 
 from django.http import JsonResponse
+
+#----------------------------------------------------------------------------------
+# class to make a generic class based view
+#----------------------------------------------------------------------------------
+class genericCreateUpdateView(UpdateView):
+    template_name = 'generic_cu.html'
+    fields ='__all__'
+
+    # redefining getobject makes the create and update possible in one class
+    def get_object(self, queryset=None):
+        try:
+            return super().get_object(queryset)
+        except AttributeError:
+            return None
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'type' in context:
+            context['isdetail'] = True
+            print('type',context['type'])
+
+        # adding some value to the context
+        m = self.model
+
+        context['title']  = "%s form" % m._meta.verbose_name_plural.capitalize()
+        return context
+
+class genericListView(ListView):
+    template_name="generic_list.html"
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        # adding some value to the context
+        m = self.model
+
+        context['title']  = m._meta.verbose_name_plural.capitalize()
+        context['model']  = m._meta.verbose_name
+        # fields should be set in the model by a function called
+        # get_available_fields
+        fields = m.get_available_fields()
+
+        fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
+
+        context['fields'] = fnames
+        context['datas'] = self.get_queryset().values_list(*fields)
+        context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
+        context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
+        return context
+
 #----------------------------------------------------------------------------------
 # Image class stuff
 #----------------------------------------------------------------------------------
@@ -57,8 +106,7 @@ class imageCUView(View):
 # Mask class stuff
 #----------------------------------------------------------------------------------
 
-
-class maskListView(ListView):
+class maskListView(genericListView):
     model = Mask
 
     def get_queryset(self):
@@ -74,17 +122,10 @@ class maskDetailView(DetailView):
     model = Mask
     context_object_name='mask'
 
-class maskCUView(UpdateView):
+class maskCUView(genericCreateUpdateView):
     model = Mask
-    fields='__all__'
     template_name = 'mask_cu.html'
     success_url = reverse_lazy('listmask')
-
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except AttributeError:
-            return None
 
     def form_valid(self, form):
         print('form is valid')
@@ -96,84 +137,54 @@ class maskCUView(UpdateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-
-
 def maskSearchView(request):
     return HttpResponseRedirect(reverse('listmask'))
 
 # ----------------------------------------------------------------------------------
 # Usage class stuff
 # ----------------------------------------------------------------------------------
-class usageListView(ListView):
+class usageListView(genericListView):
     model = Usage
 
-class usageCUView(UpdateView):
+class usageCUView(genericCreateUpdateView):
     model = Usage
-    fields ='__all__'
-    template_name = 'usage_cu.html'
     success_url = reverse_lazy('listusage')
-
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except AttributeError:
-            return None
 
 # ----------------------------------------------------------------------------------
 # Localisation class stuff
 # ----------------------------------------------------------------------------------
-class localisationListView(ListView):
+class localisationListView(genericListView):
     model = Localisation
 
-class localisationCUView(UpdateView):
+class localisationCUView(genericCreateUpdateView):
     model = Localisation
-    fields ='__all__'
-    template_name = 'localisation_cu.html'
     success_url = reverse_lazy('listlocalisation')
-
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except AttributeError:
-            return None
 
 # ----------------------------------------------------------------------------------
 # Manufacturer class stuff
 # ----------------------------------------------------------------------------------
-class manufacturerListView(ListView):
+class manufacturerListView(genericListView):
     model = Manufacturer
 
-class manufacturerCUView(UpdateView):
+class manufacturerCUView(genericCreateUpdateView):
     model =Manufacturer
-    fields ='__all__'
-    template_name = 'manufacturer_cu.html'
     success_url = reverse_lazy('listmanufacturer')
-
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except AttributeError:
-            return None
-
 
 # ----------------------------------------------------------------------------------
 # Motif class stuff
 # ----------------------------------------------------------------------------------
-class motifListView(ListView):
+class motifListView(genericListView):
     model = Motif
 
-class motifCUView(UpdateView):
+class motifCUView(genericCreateUpdateView):
     model = Motif
-    form_class = MotifModelForm
-    #    fields ='__all__'
-    template_name = 'motif_cu.html'
+    # needed to override the fields in genericCreateUpdateView
+    #fields=None
+    #form_class = MotifModelForm
+    #template_name = 'motif_cu.html'
+
+
     success_url = reverse_lazy('listmotif')
-
-    def get_object(self, queryset=None):
-        try:
-            return super().get_object(queryset)
-        except AttributeError:
-            return None
 
     # creating a method like this makes it available in template
     # with the {{ view.motiftype_def }}
@@ -183,23 +194,23 @@ class motifCUView(UpdateView):
     def motiftype_def(self):
 
         all_m={}
-        for i in list(MotifType.objects.values()):
-            m={'nb_params': i['nb_parameters']}
-            l=[]
-            for j in json.loads(i['parameters_data']):
-                l.append(j['name_of_field'])
-            m.update({'params':l})
-            all_m.update({'val%d'%i['id'] : m})
-
+        for m in MotifType.objects.all():
+            all_m.update({m.name:m.parameters_name})
         return json.dumps(all_m)
 
 #----------------------------------------------------------------------------------
 # MotifType class stuff
 #----------------------------------------------------------------------------------
-class motifTypeListView(ListView):
+class motifTypeListView(genericListView):
     model = MotifType
 
-def motifTypeCUView(request,pk_motif=None):
+class motifTypeCUView(genericCreateUpdateView):
+    model = MotifType
+    success_url = reverse_lazy('listmotiftypes')
+
+
+
+def motifTypeCUView2(request,pk_motif=None):
 
     MotifTypeDataFormSet = formset_factory(MotifTypeDataForm, extra=0)
     UPDATE=False

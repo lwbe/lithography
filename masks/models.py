@@ -3,6 +3,7 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 from ckeditor.fields import RichTextField
+#from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
@@ -16,7 +17,7 @@ from django.urls import reverse
 
 class About(models.Model):
     """
-    a richtxtfield tha can only be editable from the admin page to give a help page. 
+    a richtxtfield that can only be editable from the admin page to give a help page.
     """
     content = RichTextField(_("about"))
 
@@ -35,6 +36,9 @@ class Usage(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_available_fields(cls):
+        return ['id','name','comment']
 
 class Localisation(models.Model ):
     """
@@ -45,20 +49,37 @@ class Localisation(models.Model ):
     def __str__(self) :
         return self.localisation
 
+    @classmethod
+    def get_available_fields(cls):
+        return ['id','localisation']
+
+
+
 class Manufacturer(models.Model):
     """
     Manufacturer : the company that made the mask
     """
     corporateName  = models.CharField(_("Corporate Name"), max_length=100)
     address1       =  models.CharField(_("Address"), max_length=100, default='', blank=True, null=True)
-    address2       = models.CharField(_("Address"), max_length=100, default='', blank=True, null=True)
+    address2       = models.CharField(_("Address cpl."), max_length=100, default='', blank=True, null=True)
     postcode       = models.CharField(_("Postal Code"), max_length=100, default='', blank=True, null=True)
     city           = models.CharField(_("City"), max_length=100, default='', blank=True, null=True)
     country        = models.CharField(_("Country"), max_length=100, default='', blank=True, null=True)
     email          = models.EmailField(_("@mail"), max_length=100, default='', blank=True, null=True)
     
     def __str__(self):
-        return self.corporateName  
+        return self.corporateName
+
+    @classmethod
+    def get_available_fields(cls):
+        return ['id',
+                'corporateName',
+                'address1',
+                'address2',
+                'postcode',
+                'city',
+                'country',
+                'email']
 
 
 class MotifType(models.Model):
@@ -68,59 +89,98 @@ class MotifType(models.Model):
                             help_text="something has to be written here"
                             )
     nb_parameters = models.IntegerField(verbose_name="the number of parameters")
-    parameters_data=models.CharField(max_length=2000)
-    comment    = models.CharField(_("Comment"),max_length=1000)
+    #parameters_name=ArrayField(models.CharField(max_length=255))
+
+    # very basic way to handle a certain number of fields better use FK but the form can be simple using some javascript.
+    param_name_0 = models.CharField(max_length=255)
+    param_name_1 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_2 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_3 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_4 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_5 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_6 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_7 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_8 = models.CharField(max_length=255, default='', blank=True, null=True)
+    param_name_9 = models.CharField(max_length=255, default='', blank=True, null=True)
+    comment    = models.CharField(_("Comment"),max_length=1000, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_available_fields(cls):
+        return ['id',
+                'name',
+                'nb_parameters',
+                'param_name_0',
+                'comment']
 
 
 class Motif(models.Model):
     name = models.CharField(unique=True,
                             max_length=255)
     type = models.ForeignKey(MotifType,on_delete=models.CASCADE)
-
     step = models.FloatField(_("Step"))
-
-    # we should set default value to something null?
-    value0 = models.FloatField()
-    value1 = models.FloatField(blank=True,null=True,default=None)
-    value2 = models.FloatField(blank=True,null=True,default=None)
-    value3 = models.FloatField(blank=True,null=True,default=None)
-    value4 = models.FloatField(blank=True,null=True,default=None)
-    value5 = models.FloatField(blank=True,null=True,default=None)
-    value6 = models.FloatField(blank=True,null=True,default=None)
-    value7 = models.FloatField(blank=True,null=True,default=None)
-    value8 = models.FloatField(blank=True,null=True,default=None)
-    value9 = models.FloatField(blank=True,null=True,default=None)
+    #values = ArrayField(models.FloatField(blank=True))
+    value_0 = models.FloatField(_("First parameter"))
+    value_1 = models.FloatField(_("Second parameter"), default='', blank=True, null=True)
+    value_2 = models.FloatField(_("Third parameter"), default='', blank=True, null=True)
+    value_3 = models.FloatField(_("Fourth parameter"), default='', blank=True, null=True)
+    value_4 = models.FloatField(_("Fifth parameter"), default='', blank=True, null=True)
+    value_5 = models.FloatField(_("Sixth parameter"), default='', blank=True, null=True)
+    value_6 = models.FloatField(_("Seventh parameter"), default='', blank=True, null=True)
+    value_7 = models.FloatField(_("Eight parameter"), default='', blank=True, null=True)
+    value_8 = models.FloatField(_("Ninth parameter"), default='', blank=True, null=True)
+    value_9 = models.FloatField(_("Tenth parameter"), default='', blank=True, null=True)
 
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_available_fields(cls):
+        return ['id',
+                'name',
+                'type',
+                'step',
+                'value_0']
 
 class Mask(models.Model):
     name = models.CharField(unique=True, max_length=255)
-    motifs=models.ManyToManyField(Motif)
+    motifs = models.ManyToManyField(Motif)
 
     polarisationChoices = (('---', 'Select'), ('Positif', 'Positif'), ('Negatif', 'Negatif'))
 
-    
-    idNumber     = models.CharField(_("id. number"),max_length=50,default='',unique=True)
-    usage        = models.ForeignKey(Usage,on_delete=models.PROTECT,blank=True,null=True)
-    localisation = models.ForeignKey(Localisation,on_delete=models.PROTECT,blank=True,null=True)
-    manufacturer = models.ForeignKey(Manufacturer,on_delete=models.PROTECT,blank=True,null=True)
-    conceptor    = models.CharField(_("Conceptor"),max_length=100,default='',blank=True,null=True)
-    level        = models.IntegerField(_("Level"),default=1)
-    creationYear = models.CharField(_("year of creation"),max_length=10,default='2000')
-    GDSFile      = models.FileField(_("GDS File"),default='',blank=True,null=True,upload_to="GDS/")
-    active       = models.BooleanField(_("Active"),default=True)
-    polarisation = models.CharField(_("Polarisation"),max_length=20,choices=polarisationChoices,default='Select')
-    description  = models.TextField("Description",default='',blank=True,null=True)
-
-
+    idNumber = models.CharField(_("id. number"), max_length=50, default='', unique=True)
+    usage = models.ForeignKey(Usage, on_delete=models.PROTECT, blank=True, null=True)
+    localisation = models.ForeignKey(Localisation, on_delete=models.PROTECT, blank=True, null=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, blank=True, null=True)
+    conceptor = models.CharField(_("Conceptor"), max_length=100, default='', blank=True, null=True)
+    level = models.IntegerField(_("Level"), default=1)
+    creationYear = models.CharField(_("year of creation"), max_length=10, default='2000')
+    GDSFile = models.FileField(_("GDS File"), default='', blank=True, null=True, upload_to="GDS/")
+    active = models.BooleanField(_("Active"), default=True)
+    polarisation = models.CharField(_("Polarisation"), max_length=20, choices=polarisationChoices, default='Select')
+    description = models.TextField("Description", default='', blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_available_fields(cls):
+        return ['id',
+                'name',
+                'motifs',
+                'idNumber',
+                'usage__name',
+                'localisation__localisation',
+                'manufacturer__corporateName',
+                'conceptor',
+                'level',
+                'creationYear',
+                'GDSFile',
+                'active',
+                'polarisation',
+                'description']
 
 
 class Image(models.Model):
