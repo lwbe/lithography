@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% load thumbnail %}
+{% block content %}
+
+<div class="jumbotron text-white rounded bg-dark">
+    <h1>Mask Detail</h1>
+</div>
+
+
+
+
+<form action="" id="fileuploadform" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Name:</label>
+        <input class="form-control" readonly type="text" name="name" value="{{ mask.name }}"/>
+    </div>
+    <div class="form-group">
+        <label >Usage:</label>
+        <input class="form-control" readonly type="text" name="name" value="{{ mask.usage }}"/>
+    </div>
+</form>
+<div class="row">
+    <div id="links">
+        {% for image in mask.image_set.all %}
+        <a href={{ image.image.url }} title="{{ image.image.name }}" >
+            <img src="{{ image.image|thumbnail_url:'avatar' }}" alt="{{ image.image.name }}" />
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script src="{% static 'blueimpgallery/Gallery-master/js/blueimp-gallery.min.js' %}" ></script>
+<script>
+document.getElementById('links').onclick = function (event) {
+    event = event || window.event;
+    var target = event.target || event.srcElement,
+        link = target.src ? target.parentNode : target,
+        options = {index: link, event: event},
+        links = this.getElementsByTagName('a');
+    blueimp.Gallery(links, options);
+};
+</script>
+{% endblock %}

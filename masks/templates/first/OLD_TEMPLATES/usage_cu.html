@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Usage form</h1>
+<form action="" method="post">
+    {%csrf_token%}
+
+    {% for error in form.non_field_errors %}
+    <div class="form-group has-errors text-danger small">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% for field in form %}
+    <div class="form-group has-errors text-danger small">
+        {{ field.errors }}
+    </div>
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+        <small id="{{ field.id_for_label}}_help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {{ formset.management_form }}
+    <input id="submit" type="submit" value="Submit" style="display:none"/>
+
+ </form>
+
+<script>
+    document.querySelectorAll('input, select').forEach(function(s) {
+    if (s.id.startsWith('id_')) {
+        if (s.type==='checkbox') {
+            s.classList.add("form-check");
+        } else if (s.type==='file') {
+            s.classList.add("form-control-file");
+        } else {;
+            s.classList.add("form-control");
+        }
+    }
+});
+</script>
+
+{% endblock %}

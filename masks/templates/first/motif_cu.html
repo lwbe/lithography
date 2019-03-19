@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="jumbotron text-white rounded bg-dark">
+    <h1>Motif Creation</h1>
+</div>
+<form action="" method="post">
+    {%csrf_token%}
+
+    {% for error in form.non_field_errors %}
+    <div class="form-group has-errors text-danger small">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% for field in form %}
+    <div class="form-group has-errors text-danger small">
+        {{ field.errors }}
+    </div>
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+        <small id="{{ field.id_for_label}}_help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <input id="submit" type="submit" value="Submit"/>
+
+
+</form>
+
+<script>
+
+   var motiftype_def = {{ view.motiftype_def|safe }};
+   var values_id =  document.querySelectorAll('[id^="id_value"]');
+   var name_of_motif=new Array(1);
+   // we hide the input without value
+   for (var i of values_id) {
+      if (! i.value){
+          i.parentNode.style.display='none';
+      }
+   }
+
+   function update_name(){
+       console.log('called',name_of_motif);
+         document.getElementById('id_name').value=name_of_motif.join('__');
+   }
+
+   function update_size(){
+      console.log('editing ',this.id.slice(-1)+1);
+      name_of_motif[1*this.id.slice(-1)+1] = this.value;
+      update_name();
+   }
+
+   function update_form(){
+      var m_def = motiftype_def['val'+this.value];
+
+      name_of_motif[0]=this.options[this.selectedIndex].innerHTML;
+
+      console.log(m_def,m_def.nb_params);
+      for (var i=0; i< m_def.nb_params ; i++){
+         //we activate the values
+         console.log('setting id_value'+i);
+         var input = document.getElementById('id_value'+i);
+         // showing the div
+         input.parentNode.style.display='block';
+         input.addEventListener('input',update_size)
+         // setting the value
+         input.previousElementSibling.innerText=m_def.params[i]+':';
+         name_of_motif.push('');
+      }
+             console.log('before calling',name_of_motif);
+
+      update_name()
+   }
+   var select=document.getElementById('id_type').addEventListener('change',update_form);
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,153 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{# 1. BUTTON TO TRIGGER THE ACTION #}
+<form action="{% url 'createimage' %}" id="fileuploadform" method="post" enctype="multipart/form-data">
+    {%csrf_token%}
+
+
+
+
+
+  {% for image in images %}
+  {{ image.url }}
+  {% endfor %}
+
+<!--
+<div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
+-->
+  <div class="card card-body bg-light" style="padding-top: 4rem; padding-bottom: 4rem;">
+    <div class="mx-auto">
+      <span class="fa fa-arrow-down" style="font-size: 4rem;"></span>
+      <h3>Drop Photos here to Upload or click </h3>
+
+      <button type="button" class="btn btn-primary js-upload-photos">
+        <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
+      </button>
+    </div>
+</div>
+
+{# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+
+<input id="fileupload" type="file" name="image" multiple
+       style="display: none;"
+       data-url="{% url 'createimage' %}"
+       data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+
+<div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Uploading...</h4>
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
+<table id="gallery" class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Images</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for image in images %}
+      <tr>
+        <td>
+          <a href="{{ image.image.url }}">{{ image.image.name }}</a>
+          <label for={{ image.id }} >Delete</label>
+
+          <input type="checkbox" id="{{ image.id }}" name="imagetodelete" value="{{ image.id }}" />
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+    <input id="submit" type="submit" name='submit' value="Submit" />
+
+</form>
+
+{% endblock %}
+
+
+
+{% block javascript %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'jQuery-File-Upload-9.22.0/js/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'jQuery-File-Upload-9.22.0/js//jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'jQuery-File-Upload-9.22.0/js/jquery.fileupload.js' %}"></script>
+
+  {# PHOTOS PAGE SCRIPTS #}
+<script>
+    $(function () {
+  /* 1. OPEN THE FILE EXPLORER WINDOW */
+  $(".js-upload-photos").click(function () {
+    console.log('clicked');
+    $("#fileupload").click();
+  });
+
+  /* 2. INITIALIZE THE FILE UPLOAD COMPONENT */
+  $("#fileupload").fileupload({
+    dataType: 'json',
+    sequentialUploads: true,  /* 1. SEND THE FILES ONE BY ONE */
+    //autoUpload : false,
+    //formData: {'mask': {{ mask_id }} },
+
+
+    // on start
+
+    start: function (e) {  /* 2. WHEN THE UPLOADING PROCESS STARTS, SHOW THE MODAL */
+          console.log('start uploading',$("#modal-progress"));
+
+      //$("#modal-progress").modal("show");
+    },
+
+    //on stop
+
+    stop: function (e) {  /* 3. WHEN THE UPLOADING PROCESS FINALIZE, HIDE THE MODAL */
+      console.log('finished uploading',$("#modal-progress"));
+      //$("#modal-progress").modal("hide");
+      //console.log('leaving finished uploading');
+      //$("#modal-progress").modal("hide");
+
+    },
+
+    // on progress
+
+    progressall: function (e, data) {  /* 4. UPDATE THE PROGRESS BAR */
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      var strProgress = progress + "%";
+      $(".progress-bar").css({"width": strProgress});
+      $(".progress-bar").text(strProgress);
+    },
+
+    // on done
+
+    done: function (e, data) {  /* 3. PROCESS THE RESPONSE FROM THE SERVER */
+      if (data.result.is_valid) {
+        $("#gallery tbody").prepend(
+        "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a>   <label for='"+data.result.id+"'>Delete</label> <input type='checkbox' id='"+data.result.id+"' name='imagetodelete' value='"+data.result.id+"' </td></tr>/>")
+
+      }
+    }
+  });
+
+});
+</script>
+
+{% endblock %}
+
+
+"<tr><td><img src='" + data.result.url + "'>" + data.result.name + "</a>   <label for='"+data.result.id+"'>Delete</label> <input type='checkbox' id='"+data.result.id+"' name='imagetodelete' value='"+data.result.id+"' </td></tr>/>")
+

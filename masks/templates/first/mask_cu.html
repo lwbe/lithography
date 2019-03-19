@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="https://blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+<link rel="stylesheet" href="css/jquery.fileupload.css">
+<link rel="stylesheet" href="css/jquery.fileupload-ui.css">
+<!-- CSS adjustments for browsers with JavaScript disabled -->
+<noscript><link rel="stylesheet" href="css/jquery.fileupload-noscript.css"></noscript>
+<noscript><link rel="stylesheet" href="css/jquery.fileupload-ui-noscript.css"></noscript>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron text-white rounded bg-dark">
+    <h1>Mask Creation</h1>
+</div>
+<!--
+<form action="{% url 'createmask' %}" id="fileuploadform" method="post" enctype="multipart/form-data">
+-->
+<form action="" id="fileuploadform" method="post" enctype="multipart/form-data">
+    {%csrf_token%}
+
+    {% for error in form.non_field_errors %}
+    <div class="form-group has-errors text-danger small">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% for field in form %}
+    <div class="form-group has-errors text-danger small">
+        {{ field.errors }}
+    </div>
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+        <small id="{{ field.id_for_label}}_help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <input id="submit" type="submit" name="submit" value="Submit" />
+    <input id="addimage" type="submit" name="addimage" value="Add image" />
+
+</form>
+
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{# duallistbox #}
+
+<script src="{% static 'bootstrap-duallistbox-4.0.1/dist/jquery.bootstrap-duallistbox.min.js' %}" ></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap-duallistbox-4.0.1/dist/bootstrap-duallistbox.css' %}">
+
+<script>
+$("#id_motifs").bootstrapDualListbox({
+    // see next for specifications
+});
+</script>
+
+
+<script>
+// to style the form according to bootstrap
+document.querySelectorAll('input, select').forEach(function(s) {
+    if (s.id.startsWith('id_')) {
+        if (s.type==='checkbox') {
+            s.classList.add("form-check");
+        } else if (s.type==='file') {
+            s.classList.add("form-control-file");
+        } else {;
+            s.classList.add("form-control");
+        }
+    }
+});
+</script>
+
+
+{% endblock %}

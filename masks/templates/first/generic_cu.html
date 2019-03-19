@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron text-white rounded bg-dark">
+    <h1>{{ title }}</h1>
+</div>
+
+<form action="" method="post">
+    {%csrf_token%}
+
+    {% if isdetail %}
+    <fieldset disabled="disabled">
+    {% endif %}
+    {% for error in form.non_field_errors %}
+    <div class="form-group has-errors text-danger small">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+    {% for field in form %}
+    <div class="form-group has-errors text-danger small">
+        {{ field.errors }}
+    </div>
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}
+        <small id="{{ field.id_for_label}}_help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div id="id_arrayfield" class="form-group">
+    </div>
+
+    {{ formset.management_form }}
+
+    {% if isdetail %}
+    </fieldset>
+    {% else %}
+    <input id="submit" type="submit" value="Submit" />
+    {% endif %}
+ </form>
+
+<script>
+    // give the bootstrap look
+    document.querySelectorAll('input, select').forEach(function(s) {
+        if (s.id.startsWith('id_')) {
+            if (s.type==='checkbox') {
+                s.classList.add("form-check");
+            } else if (s.type==='file') {
+                s.classList.add("form-control-file");
+            } else {;
+                s.classList.add("form-control");
+            }
+        }
+     });
+{% comment %}
+    // for motif stuff. Will be evaluated only if view.motiftype_def is defined
+    {% if view.motiftype_def %}
+        // we get the info
+        var motiftype_def = {{ view.motiftype_def|safe }};
+        var data={{ form.0 }};
+        var id_values = document.getElementById("id_values");
+        if (id_values.value) {
+           console.log('we have values',id_values.value);
+           updateValues(document.getElementById("id_type"),id_values.value,)
+        }
+
+        // hide the values stuff
+        id_values.parentNode.style.display="None";
+
+
+        function updateValues() {
+           console.log('called',arguments);
+           var array_values='';
+           if (arguments.length > 1) {
+               console.log("we have args")
+               //this=arguments[0];
+               //array_values=arguments[1].split(',');
+               } else { console.log("we don't have")}
+           // getting the div where we will put the data
+           var div_array = document.getElementById('id_arrayfield');
+
+           // remove everything in the div
+           while (div_array.firstChild) {
+               div_array.removeChild(div_array.firstChild);
+           }
+
+           // now we will create the values from the dict given
+           var params = motiftype_def[this.options[this.selectedIndex].innerText];
+           var t = document.getElementById('values_tmpl');
+           var val="";
+           for (var i = 0 ; i < params.length ; i++){
+              val = "";
+              if (array_values){
+                 val = array_values[i];
+              }
+              to_add = `<div class="form-group"><label for="id_values_${i}">${params[i]}</label><input type="text" name="values" class="form-control" required id="id_values_${i}" />${val}</div>`;
+              div_array.innerHTML += to_add;
+           }
+        }
+        console.log('setting bindng');
+        document.getElementById("id_type").addEventListener('change',updateValues);
+
+        // we need to add a function when one click the submit button
+        function setValue(){
+            var div_array_nodes = document.getElementById('id_arrayfield').getElementsByTagName('input');
+            values = "";
+            for (var i=0; i< div_array_nodes.length ; i++){
+                console.log(i,div_array_nodes[i])
+                values +=div_array_nodes[i].value+',';
+            }
+            console.log(values.slice(0, -1));
+            id_values.value=values.slice(0, -1);
+        }
+        document.getElementById("submit").addEventListener('click',setValue);
+
+
+    {% endif %}
+{% endcomment %}
+</script>
+
+{% endblock %}
