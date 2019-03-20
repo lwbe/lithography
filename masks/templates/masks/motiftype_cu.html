@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>MotifType form</h1>
+<h1>MotifType form dd</h1>
 <form action="" method="post">
     {%csrf_token%}
 
@@ -64,7 +64,7 @@
     {% endfor %}
     </div>
 </div>
-
+aa
 
 <script>
     var form_count = {{formset.total_form_count}};
@@ -96,7 +96,22 @@
 
        }
        document.getElementById('id_form-TOTAL_FORMS').value=form_count;
+
+
+
+        function get_nb_parameters(){
+            document.write("called");
+            console.log(this);
+        }
+
+        var el = document.getElementById('id_nb_parameters');
+        el.addEventListener("change",get_nb_parameters,false);
+        console.log(document.getElementById('id_nb_parameters').value)
+        document.getElementsByTagName("H1")[0].innerHTML = "yourTextHere";
     }
+
+
+
 
 </script>
 

@@ -2,6 +2,18 @@
 Deploiement de django uwsgi+nginx
 =================================
 
+
+easy-thumbnails
+---------------
+easy thumbnails ne s'installe pas simplement avec pip install. Il faut donc faire un environement virtuel puis telecharger l'archive https://pypi.org/project/easy-thumbnails/ puis la decompacter et l'installer via
+
+   pithon setup.py install
+
+ensuite on configure easy thumbnail dans le settings.py de django
+
+
+
+
 La doc suivie est http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html
 
 installation de uwsgi

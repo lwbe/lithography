@@ -25,6 +25,7 @@ class genericCreateUpdateView(UpdateView):
     # redefining getobject makes the create and update possible in one class
     def get_object(self, queryset=None):
         try:
+            print("queryset=",queryset)
             return super().get_object(queryset)
         except AttributeError:
             return None
@@ -74,7 +75,7 @@ class imageCUView(View):
     def get(self, request):
         self.request.session['mask_id']=self.request.GET['mask_id']
         images_list = Image.objects.filter(mask_id=self.request.session['mask_id'])
-        return render(self.request, 'first/image_cu.html', {'images': images_list})
+        return render(self.request, 'masks/image_cu.html', {'images': images_list})
 
     def post(self, request):
         # if we press submit then we return success URL
@@ -194,8 +195,14 @@ class motifCUView(genericCreateUpdateView):
     def motiftype_def(self):
 
         all_m={}
-        for m in MotifType.objects.all():
-            all_m.update({m.name:m.parameters_name})
+        for m in MotifType.objects.all().values():
+            all_m.update({
+                m['name']:
+                    {
+                    'nb'   : m['nb_parameters'] ,
+                    'names' : [v for k,v in m.items() if k.startswith("param_name") and v]
+                    }
+            })
         return json.dumps(all_m)
 
 #----------------------------------------------------------------------------------
@@ -206,7 +213,7 @@ class motifTypeListView(genericListView):
 
 class motifTypeCUView(genericCreateUpdateView):
     model = MotifType
-    success_url = reverse_lazy('listmotiftypes')
+    success_url = reverse_lazy('listmotiftype')
 
 
 

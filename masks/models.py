@@ -88,21 +88,25 @@ class MotifType(models.Model):
                             verbose_name="name of the type of motif",
                             help_text="something has to be written here"
                             )
-    nb_parameters = models.IntegerField(verbose_name="the number of parameters")
+
+    MAX_PARAM_NB = 10
+    PARAM_NB=([(i,str(i)) for i in range(1,MAX_PARAM_NB)])
+    nb_parameters = models.IntegerField(verbose_name="the number of parameters",choices=PARAM_NB,default=1)
     #parameters_name=ArrayField(models.CharField(max_length=255))
 
     # very basic way to handle a certain number of fields better use FK but the form can be simple using some javascript.
-    param_name_0 = models.CharField(max_length=255)
-    param_name_1 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_2 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_3 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_4 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_5 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_6 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_7 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_8 = models.CharField(max_length=255, default='', blank=True, null=True)
-    param_name_9 = models.CharField(max_length=255, default='', blank=True, null=True)
-    comment    = models.CharField(_("Comment"),max_length=1000, blank=True, null=True)
+    param_name_0 = models.CharField(_("First parameter name"), max_length=255)
+    param_name_1 = models.CharField(_("Second parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_2 = models.CharField(_("Third parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_3 = models.CharField(_("Fourth parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_4 = models.CharField(_("Fifth parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_5 = models.CharField(_("Sixth parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_6 = models.CharField(_("Seventh parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_7 = models.CharField(_("Eighth parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_8 = models.CharField(_("Ninth parameter name"), max_length=255, default='', blank=True, null=True)
+    param_name_9 = models.CharField(_("Tenth parameter name"), max_length=255, default='', blank=True, null=True)
+
+    comment = models.CharField(_("Comment"),max_length=1000, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -122,6 +126,7 @@ class Motif(models.Model):
     type = models.ForeignKey(MotifType,on_delete=models.CASCADE)
     step = models.FloatField(_("Step"))
     #values = ArrayField(models.FloatField(blank=True))
+
     value_0 = models.FloatField(_("First parameter"))
     value_1 = models.FloatField(_("Second parameter"), default='', blank=True, null=True)
     value_2 = models.FloatField(_("Third parameter"), default='', blank=True, null=True)

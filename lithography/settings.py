@@ -26,6 +26,14 @@ SECRET_KEY = '3jc20tdkgc_tp@)(nfqy-i6pr&rzgfo_28arkyt8)r)$wkunq5'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# define aliases for sizes
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (200, 200), 'crop': True},
+    },
+}
+THUMBNAIL_DEBUG = True
+
 
 
 # Application definition
@@ -37,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'easy_thumbnails',
     'masks',
 ]
 

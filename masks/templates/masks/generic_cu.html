@@ -29,6 +29,7 @@
     </div>
     {% endfor %}
 
+
     <div id="id_arrayfield" class="form-group">
     </div>
 
@@ -53,7 +54,63 @@
                 s.classList.add("form-control");
             }
         }
-     });
+    });
+
+    // to toggle hidden parameters for the motif type form.
+    function get_nb_parameters(){
+        var inputs = document.querySelectorAll('*[id^="id_param_name"]');
+        for (i=0 ; i < inputs.length ; i++){
+            if (i < document.getElementById('id_nb_parameters').value){
+                inputs[i].parentElement.style.display="block";
+            } else {
+                inputs[i].parentElement.style.display="none";
+            }
+        }
+    }
+
+    var el = document.getElementById('id_nb_parameters');
+    if (el) {
+        el.addEventListener("change", get_nb_parameters, false);
+        get_nb_parameters();
+    }
+
+    // in case we have a motif
+    {% if view.motiftype_def %}
+
+        var motiftype_def = {{ view.motiftype_def|safe }};
+        console.log(motiftype_def);
+        var el=document.getElementById('id_type');
+
+        function type_action(){
+            var selected_type = el.options[el.selectedIndex].text;
+            console.log(selected_type)
+            if (selected_type in motiftype_def) {
+                console.log(motiftype_def[selected_type]);
+                var nb=motiftype_def[selected_type].nb;
+                console.log(motiftype_def[selected_type].names);
+                document.getElementById("submit").disabled = false;
+            }else {
+                var nb=0;
+                document.getElementById("submit").disabled = true;
+            }
+            var inputs = document.querySelectorAll('*[id^="id_value"]');
+            for (i=0 ; i < inputs.length ; i++){
+                if (i < nb){
+                    inputs[i].parentElement.style.display="block";
+                    inputs[i].parentElement.children[0].innerHTML=motiftype_def[selected_type].names[i];
+                } else {
+                    inputs[i].parentElement.style.display="none";
+                }
+            }
+        }
+        el.addEventListener('change',type_action,false);
+        type_action();
+    {%  endif %}
+
+
+
+
+
 {% comment %}
     // for motif stuff. Will be evaluated only if view.motiftype_def is defined
     {% if view.motiftype_def %}
