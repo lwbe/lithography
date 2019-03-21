@@ -128,15 +128,15 @@ class Motif(models.Model):
     #values = ArrayField(models.FloatField(blank=True))
 
     value_0 = models.FloatField(_("First parameter"))
-    value_1 = models.FloatField(_("Second parameter"), default='', blank=True, null=True)
-    value_2 = models.FloatField(_("Third parameter"), default='', blank=True, null=True)
-    value_3 = models.FloatField(_("Fourth parameter"), default='', blank=True, null=True)
-    value_4 = models.FloatField(_("Fifth parameter"), default='', blank=True, null=True)
-    value_5 = models.FloatField(_("Sixth parameter"), default='', blank=True, null=True)
-    value_6 = models.FloatField(_("Seventh parameter"), default='', blank=True, null=True)
-    value_7 = models.FloatField(_("Eight parameter"), default='', blank=True, null=True)
-    value_8 = models.FloatField(_("Ninth parameter"), default='', blank=True, null=True)
-    value_9 = models.FloatField(_("Tenth parameter"), default='', blank=True, null=True)
+    value_1 = models.FloatField(_("Second parameter"), blank=True, null=True)
+    value_2 = models.FloatField(_("Third parameter"), blank=True, null=True)
+    value_3 = models.FloatField(_("Fourth parameter"), blank=True, null=True)
+    value_4 = models.FloatField(_("Fifth parameter"), blank=True, null=True)
+    value_5 = models.FloatField(_("Sixth parameter"), blank=True, null=True)
+    value_6 = models.FloatField(_("Seventh parameter"), blank=True, null=True)
+    value_7 = models.FloatField(_("Eight parameter"), blank=True, null=True)
+    value_8 = models.FloatField(_("Ninth parameter"), blank=True, null=True)
+    value_9 = models.FloatField(_("Tenth parameter"),  blank=True, null=True)
 
     def __str__(self):
         return self.name

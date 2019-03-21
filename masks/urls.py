@@ -44,6 +44,9 @@ urlpatterns = [
     path('usage/update/<int:pk>/',
          login_required(views.usageCUView.as_view()),
          name='updateusage'),
+    path('usage/detail/<int:pk>/',
+         views.usageCUView.as_view(extra_context={'type':'detail'}),
+         name='detailusage'),
 
     path('localisation',
          views.localisationListView.as_view(),
@@ -54,6 +57,9 @@ urlpatterns = [
     path('localisation/update/<int:pk>/',
          login_required(views.localisationCUView.as_view()),
          name='updatelocalisation'),
+    path('localisation/detail/<int:pk>/',
+         views.localisationCUView.as_view(extra_context={'type':'detail'}),
+         name='detaillocalisation'),
 
     path('manufacturer',
          views.manufacturerListView.as_view(),
@@ -64,6 +70,9 @@ urlpatterns = [
     path('manufacturer/update/<int:pk>/',
          login_required(views.manufacturerCUView.as_view()),
          name='updatemanufacturer'),
+    path('manufacturer/detail/<int:pk>/',
+         login_required(views.manufacturerCUView.as_view(extra_context={'type':'detail'})),
+         name='detailmanufacturer'),
 
     path('masks',
          views.maskListView.as_view(),
