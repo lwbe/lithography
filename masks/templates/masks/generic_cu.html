@@ -41,7 +41,6 @@
     <input id="submit" type="submit" value="Submit" />
     {% endif %}
  </form>
-
 <script>
     // give the bootstrap look
     document.querySelectorAll('input, select').forEach(function(s) {
@@ -88,10 +87,14 @@
                 console.log(motiftype_def[selected_type]);
                 var nb=motiftype_def[selected_type].nb;
                 console.log(motiftype_def[selected_type].names);
-                document.getElementById("submit").disabled = false;
+                if (document.getElementById("submit")) {
+                    document.getElementById("submit").disabled = false;
+                }
             }else {
                 var nb=0;
-                document.getElementById("submit").disabled = true;
+                if (document.getElementById("submit")) {
+                    document.getElementById("submit").disabled = true;
+                }
             }
             var inputs = document.querySelectorAll('*[id^="id_value"]');
             for (i=0 ; i < inputs.length ; i++){

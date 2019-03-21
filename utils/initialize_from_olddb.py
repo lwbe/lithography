@@ -344,9 +344,9 @@ MasquesMotifs              Motif
                              step=m.pas,
                              type=MotifType.objects.get(name=m.typemotif.nom),
                              value_0=float(m.dim1),
-                             value_1=float(m.dim2),
-                             value_2=float(m.dim3),
-                             value_3=float(m.dim4),
+                             value_1=float(m.dim2) if m.dim2 != 0.0 else None ,
+                             value_2=float(m.dim3) if m.dim3 != 0.0 else None ,
+                             value_3=float(m.dim4) if m.dim4 != 0.0 else None ,
                              )
         ids.update({m.id: n.pk})
 
