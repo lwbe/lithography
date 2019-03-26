@@ -59,7 +59,7 @@ class genericListView(ListView):
         fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
 
         context['fields'] = fnames
-        context['datas'] = self.get_queryset().values_list(*fields)
+        context['datas'] = self.get_queryset().values(*fields)
         context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
@@ -109,15 +109,39 @@ class imageCUView(View):
 
 class maskListView(genericListView):
     model = Mask
+    template_name="mask_list.html"
 
     def get_queryset(self):
         if 'field' in self.kwargs:
             field=self.kwargs['field']
             fieldId=self.kwargs['fieldid']
+            if field == 'motif':
+                field='motifs'
+            elif field == 'motif type':
+                field='motifs__type'
             print(field,fieldId)
-            return Mask.objects.filter(**{field:fieldId})
+            return Mask.objects.filter(**{field:fieldId}).values()
         else:
             return super().get_queryset()
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        # adding some value to the context
+        m = self.model
+
+        context['title']  = m._meta.verbose_name_plural.capitalize()
+        context['model']  = m._meta.verbose_name
+        # fields should be set in the model by a function called
+        # get_available_fields
+        fields = m.get_available_fields()
+
+        fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
+
+        context['fields'] = fnames
+        context['datas'] = self.get_queryset().values(*fields)
+        context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
+        context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
+        return context
 
 class maskDetailView(DetailView):
     model = Mask
@@ -176,6 +200,7 @@ class manufacturerCUView(genericCreateUpdateView):
 # ----------------------------------------------------------------------------------
 class motifListView(genericListView):
     model = Motif
+    template_name = "mask_list.html"
 
 class motifCUView(genericCreateUpdateView):
     model = Motif
@@ -209,6 +234,7 @@ class motifCUView(genericCreateUpdateView):
 # MotifType class stuff
 #----------------------------------------------------------------------------------
 class motifTypeListView(genericListView):
+    template_name = "motiftype_list.html"
     model = MotifType
 
 class motifTypeCUView(genericCreateUpdateView):

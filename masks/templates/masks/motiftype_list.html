@@ -25,7 +25,7 @@
             {% endif %}
             </td>
             <td>{{ motiftype.name }}</td>
-            <td>{{ motiftype.parameters_data }} </td>
+            <td>{{ motiftype.get_params }}</td>
         </tr>
     {% endfor %}
     </tbody>

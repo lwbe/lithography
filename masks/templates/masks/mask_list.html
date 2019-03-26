@@ -7,33 +7,39 @@
 <table id="example" class="table table-striped table-bordered" style="width:100%">
     <thead>
         <tr>
+        </tr>
             {% for field in fields %}      <th>{{ field }}</th>  {% endfor %}
             {% if model != 'mask' %}       <th> Masks </th>      {% endif %}
             {% if user.is_authenticated %} <th> Action(s) </th>  {% endif %}
         </tr>
     </thead>
     <tbody>
+
     {% for data in datas %}
         <tr>
-            {% for value in data %}
-            {% if forloop.first %}
-            <td>
-                <a href="{% url detail_url value %}"> {{value}} </a>
-            </td>
-            {% else %}
+            {% for key,value in data.items %}
+                <td>
+                {%  if key == 'id' %}
+                    <a href="{% url detail_url value %}"> {{value}} </a>
+                {% elif key == 'motifs' %}
+                    {{ data }}
+                {%  else  %}
+                    {{ key }} {{ value }}
+                {%  endif  %}
+                </td>
+            {%  endfor %}
 
-            <td>{{ value }}</td>
-            {% endif %}
-            {% endfor %}
+
+
             {% if model != 'mask' %}
             <td>
-                <a  href="{% url 'listmaskwithfield' model data.0  %}" > masks </a>
+                <a  href="{% url 'listmaskwithfield' model data.id %}" > masks </a>
             </td>
             {% endif %}
             {% if user.is_authenticated %}
-            <td>
-                <a  href="{% url update_url data.0  %}" > Update </a>
-            </td>
+                <td>
+                    <a  href="{% url update_url data.id  %}" > Update </a>
+                </td>
             {% endif %}
         </tr>
     {% endfor %}

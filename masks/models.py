@@ -108,6 +108,9 @@ class MotifType(models.Model):
 
     comment = models.CharField(_("Comment"),max_length=1000, blank=True, null=True)
 
+    def get_params(self):
+        return ", ".join([j for i,j in vars(self).items() if (i.startswith('param_name') and j)])
+
     def __str__(self):
         return self.name
 
@@ -141,6 +144,9 @@ class Motif(models.Model):
     def __str__(self):
         return self.name
 
+    def get_values(self):
+        return ", ".join([j for i,j in vars(self).items() if (i.startswith('value') and j)])
+
     @classmethod
     def get_available_fields(cls):
         return ['id',
@@ -167,6 +173,9 @@ class Mask(models.Model):
     polarisation = models.CharField(_("Polarisation"), max_length=20, choices=polarisationChoices, default='Select')
     description = models.TextField("Description", default='', blank=True, null=True)
 
+    def get_motifs(self):
+        return "some_motifs"
+
     def __str__(self):
         return self.name
 
@@ -174,7 +183,7 @@ class Mask(models.Model):
     def get_available_fields(cls):
         return ['id',
                 'name',
-                'motifs',
+                'motifs__name',
                 'idNumber',
                 'usage__name',
                 'localisation__localisation',
