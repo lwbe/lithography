@@ -9,7 +9,17 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 
 
+from django.core.exceptions import ValidationError
 
+# validator for the idnumber field which is a formatted (?) charfield made of int.
+def validate_int(value):
+    try:
+        a=int(value)
+    except:
+        raise ValidationError(
+            _('%(value)s is not an integer'),
+            params={'value': value},
+        )
 
 
 # Create your models here.
@@ -155,13 +165,32 @@ class Motif(models.Model):
                 'step',
                 'value_0']
 
+
+
+def default_id_number():
+    ids = sorted([int(i) for i in list(Mask.objects.all().values_list('idNumber',flat=True))])
+    p = ids[0]
+    for i in ids[1:]:
+        if (i - p) > 1:
+            return "%04d" % (p+1)
+        p = i
+    return "%04d" % (i+1)
+
+
 class Mask(models.Model):
+
+    polarisationChoices = (('---', 'Select'), ('Positif', 'Positif'), ('Negatif', 'Negatif'))
+    conditionChoices = (
+        (_('new'), _('new')),
+        (_('good'), _('good')),
+        (_('bad'), _('bad')),
+        (_('broken'), _('broken')),
+    )
+
     name = models.CharField(unique=True, max_length=255)
     motifs = models.ManyToManyField(Motif)
 
-    polarisationChoices = (('---', 'Select'), ('Positif', 'Positif'), ('Negatif', 'Negatif'))
-
-    idNumber = models.CharField(_("id. number"), max_length=50, default='', unique=True)
+    idNumber = models.CharField(_("id. number"),validators=[validate_int],max_length=50, unique=True,default=default_id_number)
     usage = models.ForeignKey(Usage, on_delete=models.PROTECT, blank=True, null=True)
     localisation = models.ForeignKey(Localisation, on_delete=models.PROTECT, blank=True, null=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, blank=True, null=True)
@@ -169,12 +198,11 @@ class Mask(models.Model):
     level = models.IntegerField(_("Level"), default=1)
     creationYear = models.CharField(_("year of creation"), max_length=10, default='2000')
     GDSFile = models.FileField(_("GDS File"), default='', blank=True, null=True, upload_to="GDS/")
-    active = models.BooleanField(_("Active"), default=True)
+    #active = models.BooleanField(_("Active"), default=True)
     polarisation = models.CharField(_("Polarisation"), max_length=20, choices=polarisationChoices, default='Select')
-    description = models.TextField("Description", default='', blank=True, null=True)
-
-    def get_motifs(self):
-        return "some_motifs"
+    condition = models.CharField(_("Condition"), max_length=7, choices=conditionChoices, default='new')
+    description = models.TextField(_("Description"), default='', blank=True, null=True)
+    area = models.FloatField(_("Area"), default= 0.0,blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -182,9 +210,9 @@ class Mask(models.Model):
     @classmethod
     def get_available_fields(cls):
         return ['id',
+                'idNumber',
                 'name',
                 'motifs__name',
-                'idNumber',
                 'usage__name',
                 'localisation__localisation',
                 'manufacturer__corporateName',
@@ -192,9 +220,11 @@ class Mask(models.Model):
                 'level',
                 'creationYear',
                 'GDSFile',
-                'active',
+                'condition',
                 'polarisation',
+                'area',
                 'description']
+
 
 
 class Image(models.Model):

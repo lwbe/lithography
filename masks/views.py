@@ -25,7 +25,6 @@ class genericCreateUpdateView(UpdateView):
     # redefining getobject makes the create and update possible in one class
     def get_object(self, queryset=None):
         try:
-            print("queryset=",queryset)
             return super().get_object(queryset)
         except AttributeError:
             return None
@@ -59,7 +58,7 @@ class genericListView(ListView):
         fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
 
         context['fields'] = fnames
-        context['datas'] = self.get_queryset().values(*fields)
+        context['datas'] = self.get_queryset().values_list(*fields)
         context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
@@ -109,7 +108,6 @@ class imageCUView(View):
 
 class maskListView(genericListView):
     model = Mask
-    template_name="mask_list.html"
 
     def get_queryset(self):
         if 'field' in self.kwargs:
@@ -138,7 +136,26 @@ class maskListView(genericListView):
         fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
 
         context['fields'] = fnames
-        context['datas'] = self.get_queryset().values(*fields)
+        #context['datas'] = \
+        values_list = self.get_queryset().values_list(*fields)
+
+        cur_list = list(values_list[0])
+        cur_index = cur_list[0]
+
+        index_m2m = [fnames.index('motifs')]
+        l = []
+        for i in values_list[1:]:
+            if i[0] != cur_index:
+                l.append(cur_list)
+                cur_list = list(i)
+                cur_index = i[0]
+            else:
+                for j in index_m2m:
+                    cur_list[j] +=", "+ i[j]
+        # we add the last element
+        l.append(cur_list)
+
+        context['datas'] = l
         context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
@@ -200,16 +217,9 @@ class manufacturerCUView(genericCreateUpdateView):
 # ----------------------------------------------------------------------------------
 class motifListView(genericListView):
     model = Motif
-    template_name = "mask_list.html"
 
 class motifCUView(genericCreateUpdateView):
     model = Motif
-    # needed to override the fields in genericCreateUpdateView
-    #fields=None
-    #form_class = MotifModelForm
-    #template_name = 'motif_cu.html'
-
-
     success_url = reverse_lazy('listmotif')
 
     # creating a method like this makes it available in template
@@ -291,3 +301,11 @@ def motifTypeCUView2(request,pk_motif=None):
                   {'form':form,
                    'formset':formset,
                    'update':UPDATE})
+
+from django.http import HttpResponse
+import datetime
+
+def info(request):
+    now = datetime.datetime.now()
+    html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html)

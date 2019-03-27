@@ -7,7 +7,7 @@ easy-thumbnails
 ---------------
 easy thumbnails ne s'installe pas simplement avec pip install. Il faut donc faire un environement virtuel puis telecharger l'archive https://pypi.org/project/easy-thumbnails/ puis la decompacter et l'installer via
 
-   pithon setup.py install
+   python setup.py install
 
 ensuite on configure easy thumbnail dans le settings.py de django
 

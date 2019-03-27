@@ -98,5 +98,10 @@ urlpatterns = [
          login_required(views.imageCUView.as_view()),
          name='createimage'),
 
+    path('info',
+         login_required(views.info),
+         name='info'),
+
+
 ]
 

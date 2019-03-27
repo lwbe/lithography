@@ -375,7 +375,7 @@ MasquesMasques             Mask
         na=ma.nom
         if Mask.objects.filter(name=na):
             na=na+"_1"
-        nm=Mask.objects.create(active=ma.actif,
+        nm=Mask.objects.create(condition='new' if ma.actif else 'broken',
                             creationYear=ma.anneecre,
                             conceptor=ma.concepteur,
                             description=ma.description,
@@ -383,7 +383,7 @@ MasquesMasques             Mask
                             localisation=l,
                             level=ma.niveau,
                             name=na,
-                            idNumber=ma.num,
+                            idNumber="%05d" % int(ma.num),
                             polarisation=ma.polarite,
                             usage=u)
 
