@@ -4,6 +4,6 @@
 *~
 db.sqlite3
 *.pdf
-media
+/media/*
 /static/
 
