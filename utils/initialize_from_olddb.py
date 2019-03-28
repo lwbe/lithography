@@ -1,6 +1,6 @@
 from peewee import *
 
-MEDIA='../media/ORIG/home/master/masques/media/'
+MEDIA='../../OriginalData/media/'
 PATH_TO_MANAGE_PY="../"
 PATH_TO_ORIGINAL_DB='../../OriginalData/masques.sqlite3'
 

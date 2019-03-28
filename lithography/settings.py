@@ -9,8 +9,24 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
+from django.core.exceptions import ImproperlyConfigured
 
 import os
+
+def get_env_var(key):
+    if key in os.environ:
+        return os.environ[key]
+    else:
+        error_msg = "Set the %s environment variable" % var_name
+        raise ImproperlyConfigured(error_msg)
+
+def get_env_list(key):
+    if key in os.environ:
+        return os.environ[key].split(',')
+    else:
+        error_msg = "Set the %s environment variable" % var_name
+        raise ImproperlyConfigured(error_msg)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +36,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3jc20tdkgc_tp@)(nfqy-i6pr&rzgfo_28arkyt8)r)$wkunq5'
+#SECRET_KEY = '3jc20tdkgc_tp@)(nfqy-i6pr&rzgfo_28arkyt8)r)$wkunq5'
+SECRET_KEY = get_env_var('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_env_var('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_env_list('DJANGO_ALLOWED_HOST')
 # define aliases for sizes
 THUMBNAIL_ALIASES = {
     '': {
