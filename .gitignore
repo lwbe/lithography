@@ -3,6 +3,7 @@
 *NOGIT*
 *~
 db.sqlite3
+masks.sqlite3
 *.pdf
 /media/*
 /static/
