@@ -17,14 +17,14 @@ def get_env_var(key):
     if key in os.environ:
         return os.environ[key]
     else:
-        error_msg = "Set the %s environment variable" % var_name
+        error_msg = "Set the %s environment variable" % key
         raise ImproperlyConfigured(error_msg)
 
 def get_env_list(key):
     if key in os.environ:
         return os.environ[key].split(',')
     else:
-        error_msg = "Set the %s environment variable" % var_name
+        error_msg = "Set the %s environment variable" % key
         raise ImproperlyConfigured(error_msg)
 
 

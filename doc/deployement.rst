@@ -1,16 +1,54 @@
-=================================
-Deploiement de django uwsgi+nginx
-=================================
+===========
+Deployement
+===========
 
 
-easy-thumbnails
----------------
-easy thumbnails ne s'installe pas simplement avec pip install. Il faut donc faire un environement virtuel puis telecharger l'archive https://pypi.org/project/easy-thumbnails/ puis la decompacter et l'installer via
+Doc to deploy the app to a new machine
 
-   python setup.py install
+Base install
+============
+This is a simple way to install the software. In case you know what you are doing you can do as you please.
 
-ensuite on configure easy thumbnail dans le settings.py de django
+Here I will install the app and use nginx + uwsgi to serve it.
 
+In a home directory I will create a directory called **lithography**.
+
+Then I will create a directory inside called **nginx_conf", create a virtual env and clone the repository:
+
+.. code-block:: bash
+
+  cd
+  mkdir lithography
+  cd litography
+  mkdir nginx_conf
+
+  # clone the repository
+  git clone https://github.com/lwbe/lithography.git    # this will create a directory called lithography and
+                                                       # yes the path will be lithography/lithography
+
+
+  # virtual env
+  python3.5 -m venv venv  # this will create a directory venv
+  source venv/bin/activate
+
+  # to fill the virtual env
+  pip install -r lithography/utils/requirements.txt
+
+Note to install the requirements you might need to install python3.5-dev (in debian)
+
+Then you need to create the database
+
+.. code-block:: bash
+
+
+
+
+
+
+
+
+uwsgi+nginx
+===========
 
 
 
