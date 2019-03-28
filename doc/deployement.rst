@@ -40,74 +40,56 @@ Then you need to create the database
 
 .. code-block:: bash
 
+   # setting some env vars to make it work for now they will be set in the nginx configuration file
+   export DJANGO_SECRET_KEY="a secret key not important for now"
+   export DJANGO_DEBUG=False
+   export DJANGO_ALLOWED_HOST=HOST_FQDN  # set your machine FQDN here
+
+   cd lithography # in fact you should be in the directory where manage.py is
+   ./manage.py makemigrations
+   ./manage.py migrate
 
 
 
+In the case of C2N there is a file to import the data from the previous version to run. It will be of course a one time use. This file is in utils and called initialize_from_olddb and you should set the original db and the directory for the images
 
-
-
+Now we can set the http server
 
 uwsgi+nginx
 ===========
 
+uwsgi is already installed since it is in the requirements.txt
 
 
-La doc suivie est http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html
-
-installation de uwsgi
----------------------
-On commence par installer uwsgi par:
+To test uwsgi
 
 .. code-block:: bash
 
-  pip install uwsgi
+    uwsgi --chdir=~/lithography_test/lithography/
+          --module=lithography.wsgi:application
+          --env DJANGO_SETTINGS_MODULE=lithography.settings
+          --env DJANGO_SECRET_KEY='YOUR_SECRET_KEY'
+          --env DJANGO_DEBUG=False
+          --env DJANGO_ALLOWED_HOST=YOUR_HOST_FQDN
+          --master
+          --pidfile=/tmp/project-master.pid
+          --socket=127.0.0.1:49152
+          --processes=5
+          --http :8123
+
+**NOTE: THIS SHOULD BE ON  ONE LINE**
+
+Then you can check if it works in going to http://YOUR_HOST_FQDN:8123
+
+the name is set via the env var DJANGO_ALLOWED_HOST and the port via the http swith of the uwsgi command.
 
 
-On verifie que l'application marche avec **manage.py** par
+nginx
+-----
+I will only talk about the configuration of nginx for the app website.
 
-.. code-block:: bash
 
-  python ./manage.py runserver
 
-Et des que cela marche on peut tester uwsgi par:
-
-.. code-block:: bash
-
-  uwsgi --http :8000 --module lithography.wsgi
-
-Remarques:
-
-- on lance cette commande dans l'environement virtuel et donc on a accès à tout les modules
-- l'argument de uwsgi **lithography.wsgi** est composé du répertoire ici lithography dans lequel se trouve un fichier wsgi.py.
-- enfin si on se trompe dans le nom du module on a un message d'erreur **Internal Server Error** 
-
-Le fichier wsgi.py contient
-
-.. code-block:: python
- 
-  """
-  WSGI config for lithography project.
-  
-  It exposes the WSGI callable as a module-level variable named ``application``. 
-  
-  For more information on this file, see
-  https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/
-  """
-  
-  import os
-  
-  from django.core.wsgi import get_wsgi_application  
-  
-  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "lithography.settings") 
-  
-  application = get_wsgi_application()
-  
-Installation de nginx
----------------------
-J'installe sur une debian stretch nginx par **apt install nginx-full** et on verifie en allant sur http://localhost
-qu'on a bien une page indiquant que nginx est up.
-
-Les fichiers de configuration de nginx sont dans **/etc/site-available** et ils sont affichés si un lien pointe vers eux dans **sites-enabled**
 
 On crée le site **/etc/nginx/sites-available/lithography.conf** qui contient.
 
