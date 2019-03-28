@@ -48,6 +48,8 @@ Then you need to create the database
    cd lithography # in fact you should be in the directory where manage.py is
    ./manage.py makemigrations
    ./manage.py migrate
+   ./manage.py collectstatic
+
 
 
 
