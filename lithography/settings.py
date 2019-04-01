@@ -40,7 +40,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_env_var('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_env_var('DJANGO_DEBUG')
+DEBUG = True if get_env_var('DJANGO_DEBUG').lower() == "true" else False
 
 ALLOWED_HOSTS = get_env_list('DJANGO_ALLOWED_HOST')
 # define aliases for sizes
