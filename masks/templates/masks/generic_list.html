@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load i18n %}
+
 {% block content %}
 <div class="jumbotron text-white rounded bg-dark">
     <h1>{{ title }}</h1>
@@ -18,7 +20,7 @@
             {% for value in data %}
             {% if forloop.first %}
             <td>
-                <a href="{% url detail_url value %}"> {{value}} </a>
+                <a href="{% url "detail_url" value %}"> {{value}} </a>
             </td>
             {% else %}
 
@@ -27,12 +29,12 @@
             {% endfor %}
             {% if model != 'mask' %}
             <td>
-                <a  href="{% url 'listmaskwithfield' model data.0  %}" > masks </a>
+                <a  href="{% url "listmaskwithfield" model data.0  %}" > masks </a>
             </td>
             {% endif %}
             {% if user.is_authenticated %}
             <td>
-                <a  href="{% url update_url data.0  %}" > Update </a>
+                <a  href="{% url "update_url" data.0  %}" > Update </a>
             </td>
             {% endif %}
         </tr>

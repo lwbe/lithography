@@ -1,10 +1,12 @@
+{% load i18n %}
 {% load static %}
+
+
 <!-- comment
 Datatables
 <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
 <script type="text/javascript" src="DataTables/datatables.min.js"></script>
 -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +105,7 @@ Datatables
 <!-- Static navbar -->
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Masks</a>
+        <a class="navbar-brand" href="#">{% trans "Masks" %}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -154,8 +156,6 @@ Datatables
     </nav>
 </header>
 
-
-
     <main role="main" class="container">
         {% block content %}
 
@@ -182,8 +182,6 @@ Datatables
     </footer>
     {% endblock %}
 
-
-
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
@@ -209,7 +207,7 @@ Datatables
 -->
 
 
-
+<!-- customisation of datatables -->
 <script>
         $(document).ready(function() {
             var table = $('#example').DataTable({
@@ -248,67 +246,6 @@ Datatables
 
 {% block javascript %}
 {% endblock %}
-<!-- Dropzone.js -->
-<!--
-<script src='dropzone.min.js' "></script>
 
-<script src="{% static 'dropzone/5.2.0/js/dropzone.min.js' %}"></script>
-
-<script>
-    // Get the template HTML and remove it from the doumenthe template HTML
-    //and remove it from the doument
-    var previewNode = document.querySelector("#template");
-    previewNode.id = "";
-    var previewTemplate = previewNode.parentNode.innerHTML;
-    previewNode.parentNode.removeChild(previewNode);
-</script>
-<script>
-    var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
-        url: "{% url 'createmask' %}", // Set the url
-        thumbnailWidth: 80,
-        thumbnailHeight: 80,
-        parallelUploads: 20,
-        //previewTemplate: previewTemplate,
-        autoQueue: false, // Make sure the files aren't queued until manually added
-        previewsContainer: "#preview", // Define the container to display the previews
-        clickable: "#fileinput-button" // Define the element that should be used as click trigger to select files.
-    });
-    Dropzone.autodiscover = false;
-
-    myDropzone.on("addedfile", function(file) {
-    // Hookup the start button
-        console.log(' added file');
-        file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
-    });
-
-    // Update the total progress bar
-    myDropzone.on("totaluploadprogress", function(progress) {
-        document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
-    });
-
-    myDropzone.on("sending", function(file) {
-        // Show the total progress bar when upload starts
-        document.querySelector("#total-progress").style.opacity = "1";
-        // And disable the start button
-        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
-    });
-
-    // Hide the total progress bar when nothing's uploading anymore
-    myDropzone.on("queuecomplete", function(progress) {
-        document.querySelector("#total-progress").style.opacity = "0";
-    });
-
-    // Setup the buttons for all transfers
-    // The "add files" button doesn't need to be setup because the config
-    // `clickable` has already been specified.
-    document.querySelector(".start").onclick = function() {
-        myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
-    };
-
-    document.querySelector(".cancel").onclick = function() {
-        myDropzone.removeAllFiles(true);
-    };
-</script>
--->
 </body>
 </html>

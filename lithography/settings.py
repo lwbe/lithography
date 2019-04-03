@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 from django.core.exceptions import ImproperlyConfigured
-
+from django.utils.translation import gettext_lazy as _
 import os
+
 
 def get_env_var(key):
     if key in os.environ:
@@ -19,6 +20,7 @@ def get_env_var(key):
     else:
         error_msg = "Set the %s environment variable" % key
         raise ImproperlyConfigured(error_msg)
+
 
 def get_env_list(key):
     if key in os.environ:
@@ -70,6 +72,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -131,16 +134,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGES = [
+    ('fr', _('French')),
+    ('en', _('English')),
+]
 
+LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
