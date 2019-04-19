@@ -73,6 +73,30 @@ To localise the site one just need to set the **LANGUAGE_CODE** variable in
    LANGUAGE_CODE = 'fr'
 
 
+
+The other things is to add the i18 mecanism to django and you need to change PROJECT/urls.py.
+In our case the url
+
+
+.. code-block:: python
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', include('masks.urls')),
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+becomes
+
+.. code-block:: python
+
+    urlpatterns = [
+       path('admin/', admin.site.urls),
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += i18n_patterns( path('', include('masks.urls')),)
+
+
+
 writing the strings to be translated
 ------------------------------------
 The translated text can be set in python code but also in the template files.

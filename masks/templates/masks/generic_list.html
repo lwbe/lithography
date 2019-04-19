@@ -20,7 +20,7 @@
             {% for value in data %}
             {% if forloop.first %}
             <td>
-                <a href="{% url "detail_url" value %}"> {{value}} </a>
+                <a href="{% url detail_url value %}"> {{value}} </a>
             </td>
             {% else %}
 
@@ -34,7 +34,7 @@
             {% endif %}
             {% if user.is_authenticated %}
             <td>
-                <a  href="{% url "update_url" data.0  %}" > Update </a>
+                <a  href="{% url update_url data.0  %}" > Update </a>
             </td>
             {% endif %}
         </tr>
