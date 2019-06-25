@@ -180,6 +180,7 @@ class maskCUView(genericCreateUpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 def maskSearchView(request):
+
     return HttpResponseRedirect(reverse('listmask'))
 
 # ----------------------------------------------------------------------------------

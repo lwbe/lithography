@@ -6,12 +6,28 @@
 <div class="jumbotron text-white rounded bg-dark">
     <h1>Mask Detail</h1>
 </div>
-
-
+<table class="table">
+    <tbody>
+    <tr>
+        <td> Name </td>
+        <td> {{ mask.name }} </td>
+    </tr>
+    <tr>
+        <td> Motif </td>
+        <td>
+            {%  for m in mask.motifs.all %}
+                <a href="{% url 'updatemotif' m.id  %}"> {{m.name }} </a>
+                <br>
+            {% endfor %}
+        </td>
+    </tr>
+    
+    </tbody>
+</table>
 
 
 <form action="" id="fileuploadform" method="post" enctype="multipart/form-data">
-    <div class="form-group">
+   <div class="form-group">
         <label>Name:</label>
         <input class="form-control" readonly type="text" name="name" value="{{ mask.name }}"/>
     </div>
