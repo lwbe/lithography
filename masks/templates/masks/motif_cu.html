@@ -28,7 +28,7 @@
 
     <input id="submit" type="submit" value="Submit"/>
 
-
+aaa
 </form>
 
 <script>
@@ -55,11 +55,12 @@
    }
 
    function update_form(){
+       console.log("here");
       var m_def = motiftype_def['val'+this.value];
 
       name_of_motif[0]=this.options[this.selectedIndex].innerHTML;
 
-      console.log(m_def,m_def.nb_params);
+      console.log("here",m_def,m_def.nb_params,this.value);
       for (var i=0; i< m_def.nb_params ; i++){
          //we activate the values
          console.log('setting id_value'+i);
