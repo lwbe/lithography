@@ -3,16 +3,13 @@ from django.shortcuts import render,get_object_or_404
 from django.forms import formset_factory
 from django.urls import reverse,reverse_lazy
 from django.utils.http import urlencode
-
-from django.utils.translation import ugettext_lazy as _
-
 import json
 
 from django.views.generic import ListView,TemplateView,View,DetailView,UpdateView,FormView
 
 # Create your views here.
 from .models import MotifType,Motif,Mask,Image,Usage,Localisation,Manufacturer
-from .forms import MotifTypeForm,MotifTypeDataForm,MotifModelForm,MaskModelForm,ImageModelForm
+from .forms import MotifTypeForm,MotifTypeDataForm,MaskMotifSearchForm,ImageModelForm,MaskModelForm
 
 from django.http import JsonResponse
 
@@ -139,9 +136,9 @@ class maskListView(genericListView):
         fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
 
         context['fields'] = fnames
-        #context['datas'] = \
+
         values_list = self.get_queryset().values_list(*fields)
-        l=[]
+        l = []
 
         if values_list:
             cur_list = list(values_list[0])
@@ -184,69 +181,10 @@ class maskCUView(genericCreateUpdateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-
-from django import forms
-
-class maskMotifSearchForm(forms.Form):
-    type = forms.ModelChoiceField(label=_("Type"),
-                                  queryset=MotifType.objects.all(),
-                                  widget=forms.Select(attrs={
-                                      'class': 'form-control'}))
-    value_0 = forms.CharField(label=_("First parameter"),
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}),
-                               required=False)
-    value_1 = forms.CharField(label=_("Second parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_2 = forms.CharField(label=_("Third parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_3 = forms.CharField(label=_("Fourth parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_4 = forms.CharField(label=_("Fifth parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_5 = forms.CharField(label=_("Sixth parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_6 = forms.CharField(label=_("Seventh parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_7 = forms.CharField(label=_("Eight parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_8 = forms.CharField(label=_("Ninth parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-    value_9 = forms.CharField(label=_("Tenth parameter"),
-                               required=False,
-                               widget=forms.TextInput(attrs={
-                               'class': 'form-control',
-                               'placeholder': "First parameter"}))
-
-
 class maskSearchView(FormView):
     template_name = "mask_search.html"
-    form_class = maskMotifSearchForm
+    form_class = MaskMotifSearchForm
+
 
 
     def motiftype_def(self):
@@ -262,35 +200,51 @@ class maskSearchView(FormView):
             })
         return json.dumps(all_m)
 
+def getBounds(v):
+    bounds=v.split(":")
+    if len(bounds) == 2:
+        l,u = bounds
+        l_ = None
+        try:
+            l_ = float(l)
+        except:
+            pass
+        u_ = None
+        try:
+            u_ = float(u)
+        except:
+            pass
+    return l_,u_
+
 
 class maskResultSearchView(maskListView):
 
     def get_queryset(self):
-        get_parameters=[k for k in self.request.GET.keys()]
-        query_parameters={}
+        get_parameters = [k for k in self.request.GET.keys()]
+        query_parameters = {}
         for k in get_parameters:
             v = self.request.GET[k]
-            if k.startswith("value"):
-                bounds=v.split(":")
-                if len(bounds) == 2:
-                    l,u = bounds
-                    l_ = None
-                    try:
-                        l_ = float(l)
-                    except:
-                        pass
-                    if l_:
-                        query_parameters.update({"motifs__%s__gt"%k:l_})
-                    u_ = None
-                    try:
-                        u_ = float(u)
-                    except:
-                        pass
-                    if u_:
-                        query_parameters.update({"motifs__%s__lt"%k:u_})
+            if v:
+                print("in masksearchview",k,v)
+                if k.startswith("value"):
+                    l,u=getBounds(v)
+                    if l:
+                        query_parameters.update({"motifs__%s__ge"%k : l})
+                    if u:
+                        query_parameters.update({"motifs__%s__le"%k : u})
 
-            elif k == "type":
-                query_parameters.update({"motifs__type__id":v})
+                elif k == "type":
+                    query_parameters.update({"motifs__type__id" : v})
+                elif k in ["name" , "description" , "level"]:
+                    query_parameters.update({"%s__contains" % k : v})
+                elif k in ['usage','manufacturer']:
+                    query_parameters.update({"usage" : v})
+                elif k in ['condition','polarisation']:
+                    if v != '---':
+                        query_parameters.update({"%s" % k : v})
+
+
+        print("query dictionnary",query_parameters)
         return Mask.objects.filter(**query_parameters).values()
 
 

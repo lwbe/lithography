@@ -2,7 +2,9 @@
 
 from django import forms
 from .models import Motif,Mask,Image
+from .models import MotifType
 
+from django.utils.translation import ugettext_lazy as _
 
 class MotifTypeDataForm(forms.Form):
     rank = forms.IntegerField(
@@ -61,4 +63,118 @@ class MaskModelForm(forms.ModelForm):
 class ImageModelForm(forms.ModelForm):
     class Meta:
         model = Image
-        fields=('image', 'mask')
+        fields = ('image', 'mask')
+
+
+class MaskMotifSearchForm(forms.ModelForm):
+    type = forms.ModelChoiceField(label=_("Motif Type"),
+                                  queryset=MotifType.objects.all())
+    value_0 = forms.CharField(label=_("First parameter"))
+    value_1 = forms.CharField(label=_("Second parameter"))
+    value_2 = forms.CharField(label=_("Third parameter"))
+    value_3 = forms.CharField(label=_("Fourth parameter"))
+    value_4 = forms.CharField(label=_("Fifth parameter"))
+    value_5 = forms.CharField(label=_("Sixth parameter"))
+    value_6 = forms.CharField(label=_("Seventh parameter"))
+    value_7 = forms.CharField(label=_("Eighth parameter"))
+    value_8 = forms.CharField(label=_("Nineth parameter"))
+    value_9 = forms.CharField(label=_("Tenth parameter"))
+    condition = forms.ChoiceField(label=_("Condition"),
+                                  choices=[('---',_('Select'))]+list(Mask.conditionChoices))
+
+    field_order=['type','value_0','value_1','value_2','name',
+                  'usage',
+                  'localisation',
+                  'manufacturer',
+                  'conceptor',
+                  'level',
+                  'creationYear',
+                  'condition',
+                  'polarisation',
+                  'description',
+                  'area']
+
+    class Meta:
+        model = Mask
+        fields = ['name',
+                  'usage',
+                  'localisation',
+                  'manufacturer',
+                  'conceptor',
+                  'level',
+                  'creationYear',
+                  'polarisation',
+                  'description',
+                  'area']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for f in self.fields:
+            if f in ['level','creationYear','description','area']:
+                self.fields[f].widget = forms.TextInput()
+                self.fields[f].initial = ''
+
+            self.fields[f].widget.attrs.update({
+                'placeholder': f,
+                'class':'form-control'})
+            self.fields[f].required = False
+
+
+
+
+class MaskMotifSearchForm2(forms.Form):
+    type = forms.ModelChoiceField(label=_("Type"),
+                                  queryset=MotifType.objects.all(),
+                                  widget=forms.Select(attrs={
+                                      'class': 'form-control'}))
+    value_0 = forms.CharField(label=_("First parameter"),
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}),
+                              required=False)
+    value_1 = forms.CharField(label=_("Second parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_2 = forms.CharField(label=_("Third parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_3 = forms.CharField(label=_("Fourth parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_4 = forms.CharField(label=_("Fifth parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_5 = forms.CharField(label=_("Sixth parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_6 = forms.CharField(label=_("Seventh parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_7 = forms.CharField(label=_("Eight parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_8 = forms.CharField(label=_("Ninth parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+    value_9 = forms.CharField(label=_("Tenth parameter"),
+                              required=False,
+                              widget=forms.TextInput(attrs={
+                                  'class': 'form-control',
+                                  'placeholder': "First parameter"}))
+
