@@ -1,15 +1,14 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render,get_object_or_404
-from django.forms import formset_factory
-from django.urls import reverse,reverse_lazy
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils.http import urlencode
 import json
 
-from django.views.generic import ListView,TemplateView,View,DetailView,UpdateView,FormView
+from django.views.generic import ListView,View,DetailView,UpdateView,FormView
 
 # Create your views here.
-from .models import MotifType,Motif,Mask,Image,Usage,Localisation,Manufacturer
-from .forms import MotifTypeForm,MotifTypeDataForm,MaskMotifSearchForm,ImageModelForm,MaskModelForm
+from .models import MotifType, Motif, Mask, Image, Usage, Localisation, Manufacturer
+from .forms import MotifTypeForm, MotifTypeDataForm, MaskMotifSearchForm, ImageModelForm
 
 from django.http import JsonResponse
 
@@ -31,12 +30,11 @@ class genericCreateUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         if 'type' in context:
             context['isdetail'] = True
-            print('type',context['type'])
 
         # adding some value to the context
         m = self.model
 
-        context['title']  = "%s form" % m._meta.verbose_name_plural.capitalize()
+        context['title'] = "%s form" % m._meta.verbose_name_plural.capitalize()
         return context
 
 class genericListView(ListView):
@@ -64,8 +62,6 @@ class genericListView(ListView):
 #----------------------------------------------------------------------------------
 # Image class stuff
 #----------------------------------------------------------------------------------
-
-
 class imageCUView(View):
     success_url = reverse_lazy('listmask')
 
@@ -103,20 +99,18 @@ class imageCUView(View):
 #----------------------------------------------------------------------------------
 # Mask class stuff
 #----------------------------------------------------------------------------------
-
 class maskListView(genericListView):
     model = Mask
 
     def get_queryset(self):
-        print("IN MASKLISTVIEW", self.kwargs,self.request.method)
 
         if 'field' in self.kwargs:
-            field=self.kwargs['field']
-            fieldId=self.kwargs['fieldid']
+            field = self.kwargs['field']
+            fieldId = self.kwargs['fieldid']
             if field == 'motif':
-                field='motifs'
+                field = 'motifs'
             elif field == 'motif type':
-                field='motifs__type'
+                field = 'motifs__type'
 
             return Mask.objects.filter(**{field:fieldId}).values()
         else:
@@ -162,10 +156,12 @@ class maskListView(genericListView):
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
 
+# ---
 class maskDetailView(DetailView):
     model = Mask
     context_object_name='mask'
 
+# ---
 class maskCUView(genericCreateUpdateView):
     model = Mask
     template_name = 'mask_cu.html'
@@ -181,15 +177,14 @@ class maskCUView(genericCreateUpdateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+# ---
 class maskSearchView(FormView):
     template_name = "mask_search.html"
     form_class = MaskMotifSearchForm
 
-
-
     def motiftype_def(self):
 
-        all_m={}
+        all_m = {}
         for m in MotifType.objects.all().values():
             all_m.update({
                 m['name']:
@@ -200,6 +195,11 @@ class maskSearchView(FormView):
             })
         return json.dumps(all_m)
 
+# --- utility function to extract a range from a string of the type
+# a:b   -> a  , b
+# a     -> a  , ''    # might be a only?
+# a:    -> a  , ''
+# :b    -> '' , b
 def getBounds(v):
     bounds=v.split(":")
     if len(bounds) == 2:
@@ -216,16 +216,17 @@ def getBounds(v):
             pass
     return l_,u_
 
-
+# ---
 class maskResultSearchView(maskListView):
 
     def get_queryset(self):
+        # here we are called from the form maskSearchView and we have some parameters
+        # through the get.
         get_parameters = [k for k in self.request.GET.keys()]
         query_parameters = {}
         for k in get_parameters:
             v = self.request.GET[k]
             if v:
-                print("in masksearchview",k,v)
                 if k.startswith("value"):
                     l,u=getBounds(v)
                     if l:
@@ -242,9 +243,6 @@ class maskResultSearchView(maskListView):
                 elif k in ['condition','polarisation']:
                     if v != '---':
                         query_parameters.update({"%s" % k : v})
-
-
-        print("query dictionnary",query_parameters)
         return Mask.objects.filter(**query_parameters).values()
 
 
@@ -318,55 +316,10 @@ class motifTypeCUView(genericCreateUpdateView):
     success_url = reverse_lazy('listmotiftype')
 
 
-
-def motifTypeCUView2(request,pk_motif=None):
-
-    MotifTypeDataFormSet = formset_factory(MotifTypeDataForm, extra=0)
-    UPDATE=False
-    if pk_motif:
-        # we update
-        UPDATE=True
-        motif_object = get_object_or_404(MotifType, id=pk_motif)
-        form = MotifTypeForm(initial={'name': motif_object.name,
-                                      'nb_parameters': motif_object.nb_parameters,
-                                      'step':motif_object.step})
-
-        formset_data = json.loads(motif_object.parameters_data)
-        formset = MotifTypeDataFormSet(initial=formset_data)
-    else:
-        form = MotifTypeForm()
-        formset = MotifTypeDataFormSet()
-
-    # we deal with the incoming data
-    if request.method == 'POST':
-
-        form = MotifTypeForm(request.POST)
-        formset = MotifTypeDataFormSet(request.POST,request.FILES)
-
-        IS_VALID=True
-        if form.is_valid():
-            data_to_save = form.cleaned_data
-            if formset.is_valid():
-                data_to_save.update({'parameters_data':json.dumps(formset.cleaned_data)})
-            else:
-                IS_VALID=False
-        else:
-            IS_VALID=False
-
-
-        if IS_VALID:
-            if UPDATE:
-                name=motif_object.name
-            else:
-                name=form.cleaned_data['name']
-            m,created = MotifType.objects.update_or_create(name=name,defaults=data_to_save)
-
-            return HttpResponseRedirect(reverse('listmotiftype'))
-
-    return render(request,'motiftype_cu.html',
-                  {'form':form,
-                   'formset':formset,
-                   'update':UPDATE})
+#----
+#  to remove
+# just for test
+#
 
 from django.http import HttpResponse
 import datetime
