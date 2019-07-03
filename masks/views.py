@@ -195,26 +195,31 @@ class maskSearchView(FormView):
             })
         return json.dumps(all_m)
 
+
+from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
+def tofloat(v):
+    try:
+        return float(v)
+    except:
+        return None
+        raise ValidationError(
+             _('Invalid value: %(value)s'),
+              code='invalid',
+            params={'value': v},
+            )
 # --- utility function to extract a range from a string of the type
 # a:b   -> a  , b
 # a     -> a  , ''    # might be a only?
 # a:    -> a  , ''
 # :b    -> '' , b
+
 def getBounds(v):
-    bounds=v.split(":")
-    if len(bounds) == 2:
-        l,u = bounds
-        l_ = None
-        try:
-            l_ = float(l)
-        except:
-            pass
-        u_ = None
-        try:
-            u_ = float(u)
-        except:
-            pass
-    return l_,u_
+    if not ":" in v:
+        return tofloat(v),
+
+    l,u = v.split(":")
+    return tofloat(l),tofloat(u)
 
 # ---
 class maskResultSearchView(maskListView):
@@ -228,11 +233,15 @@ class maskResultSearchView(maskListView):
             v = self.request.GET[k]
             if v:
                 if k.startswith("value"):
-                    l,u=getBounds(v)
-                    if l:
-                        query_parameters.update({"motifs__%s__ge"%k : l})
-                    if u:
-                        query_parameters.update({"motifs__%s__le"%k : u})
+                    b = getBounds(v)
+                    if len(b) == 1:
+                        query_parameters.update({"motifs__%s" % k: b[0]})
+                    else:
+                        l,u = b
+                        if l:
+                            query_parameters.update({"motifs__%s__gte" % k: l})
+                        if u:
+                            query_parameters.update({"motifs__%s__lte"%k : u})
 
                 elif k == "type":
                     query_parameters.update({"motifs__type__id" : v})

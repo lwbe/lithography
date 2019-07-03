@@ -214,18 +214,40 @@ Datatables
                 dom: 'Bfrtip',
                 lengthMenu: [
                     [ 10, 25, 50, 100,  -1 ],
-                    [ '10 rows', '25 rows', '50 rows', '100 rows', 'Show all' ]
+                    [ '10 lignes', '25 lignes', '50 lignes', '100 lignes', 'Tout' ]
                 ],
 
                 buttons: [
-                    'copy',
-                    'excel',
-                    'print',
-                    'pageLength',
-                    'colvis'
+                    {
+                        extend: 'copy',
+                        text:'Copie',
+                    },
+                    {
+                        extend:'excel',
+                        text:'export vers Excel',
+                    },
+                    {
+                        extend:'print',
+                        text:'Imprime',
+                    },
+                    {
+                        extend: 'pageLength',
+                        text:'Affiche ',
+                    },
+                    {
+                        extend: 'colvis',
+                        text:'Selection colonnes',
+                    }
                 ],
                 colReorder: true,
                 select: true,
+                columnDefs: [
+                    {
+                        targets: [0,2,3],
+                        visible: false
+                    }
+                ]
+
                 }
             );
         } );
