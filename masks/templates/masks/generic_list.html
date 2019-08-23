@@ -27,7 +27,7 @@
             {% endfor %}
             {% if model != 'mask' %}
             <td>
-                <a  href="{% url 'listmaskwithfield' model data.0  %}" > masks </a>
+                <a  href="{% url "listmaskwithfield" model data.0  %}" > masks </a>
             </td>
             {% endif %}
             {% if user.is_authenticated %}

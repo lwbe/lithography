@@ -90,9 +90,15 @@ urlpatterns = [
          views.maskDetailView.as_view(),
          name='detailmask'),
 
+    # search part
+    # provides the form
     path('mask/search',
-         views.maskSearchView,
+         views.maskSearchView.as_view(),
          name='searchmask'),
+    # show the results
+    path('mask/results',
+         views.maskResultSearchView.as_view(),
+         name='resultsmask'),
 
     path('image/create',
          login_required(views.imageCUView.as_view()),

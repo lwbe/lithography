@@ -26,6 +26,9 @@
             </td>
             <td>{{ motiftype.name }}</td>
             <td>{{ motiftype.get_params }}</td>
+            <td>
+                <a  href="{% url "listmaskwithfield" model motiftype.id  %}" > masks </a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

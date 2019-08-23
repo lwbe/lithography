@@ -1,21 +1,14 @@
 from django.db import models
-
-
 from django.utils.translation import ugettext_lazy as _
 from ckeditor.fields import RichTextField
-#from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.urls import reverse
 
-
-from django.core.exceptions import ValidationError
 
 # validator for the idnumber field which is a formatted (?) charfield made of int.
 def validate_int(value):
     try:
-        a=int(value)
-    except:
+        int(value)
+    except (TypeError, ValueError):
         raise ValidationError(
             _('%(value)s is not an integer'),
             params={'value': value},
@@ -27,7 +20,7 @@ def validate_int(value):
 
 class About(models.Model):
     """
-    a richtxtfield that can only be editable from the admin page to give a help page.
+    a richtextfield that can only be editable from the admin page to give a help page.
     """
     content = RichTextField(_("about"))
 
@@ -39,8 +32,8 @@ class Usage(models.Model):
     """
     Usage of the mask TLM, TBH,...
     """
-    name       = models.CharField(_("Usage"),max_length=100)
-    comment    = models.CharField(_("Comment"),max_length=1000)
+    name = models.CharField(_("Usage"), max_length=100)
+    comment = models.CharField(_("Comment"), max_length=1000)
 
     # needed for CBV
     def __str__(self):
@@ -48,20 +41,21 @@ class Usage(models.Model):
 
     @classmethod
     def get_available_fields(cls):
-        return ['id','name','comment']
+        return ['id', 'name', 'comment']
+
 
 class Localisation(models.Model ):
     """
     Localisation a string to locate where is the mask 
     """
-    localisation = models.CharField(_("Localisation"),max_length=100)
+    localisation = models.CharField(_("Localisation"), max_length=100)
     
-    def __str__(self) :
+    def __str__(self):
         return self.localisation
 
     @classmethod
     def get_available_fields(cls):
-        return ['id','localisation']
+        return ['id', 'localisation']
 
 
 
@@ -69,13 +63,13 @@ class Manufacturer(models.Model):
     """
     Manufacturer : the company that made the mask
     """
-    corporateName  = models.CharField(_("Corporate Name"), max_length=100)
-    address1       =  models.CharField(_("Address"), max_length=100, default='', blank=True, null=True)
-    address2       = models.CharField(_("Address cpl."), max_length=100, default='', blank=True, null=True)
-    postcode       = models.CharField(_("Postal Code"), max_length=100, default='', blank=True, null=True)
-    city           = models.CharField(_("City"), max_length=100, default='', blank=True, null=True)
-    country        = models.CharField(_("Country"), max_length=100, default='', blank=True, null=True)
-    email          = models.EmailField(_("@mail"), max_length=100, default='', blank=True, null=True)
+    corporateName = models.CharField(_("Corporate Name"), max_length=100)
+    address1 = models.CharField(_("Address"), max_length=100, default='', blank=True, null=True)
+    address2 = models.CharField(_("Address cpl."), max_length=100, default='', blank=True, null=True)
+    postcode = models.CharField(_("Postal Code"), max_length=100, default='', blank=True, null=True)
+    city = models.CharField(_("City"), max_length=100, default='', blank=True, null=True)
+    country = models.CharField(_("Country"), max_length=100, default='', blank=True, null=True)
+    email = models.EmailField(_("@mail"), max_length=100, default='', blank=True, null=True)
     
     def __str__(self):
         return self.corporateName
@@ -131,6 +125,8 @@ class MotifType(models.Model):
                 'nb_parameters',
                 'param_name_0',
                 'comment']
+
+
 
 
 class Motif(models.Model):

@@ -7,4 +7,6 @@ masks.sqlite3
 *.pdf
 /media/*
 /static/
+env_vars.sh
+
 
