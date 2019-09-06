@@ -103,40 +103,40 @@ Datatables
 <!-- Static navbar -->
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="{% url 'listmask' %}">Masks</a>
+        <a class="navbar-brand" href="{% url 'listmask' %}">Masques pour la lithographie optique</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'searchmask' %}"> Search <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url 'searchmask' %}"> Rechercher <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Voir</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'listmask' %}">Masks</a>
+                        <a class="dropdown-item" href="{% url 'listmask' %}">Masques</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'listmotif' %}">Motifs</a>
-                        <a class="dropdown-item" href="{% url 'listmotiftype' %}">Type of motif</a>
+                        <a class="dropdown-item" href="{% url 'listmotiftype' %}">Type de motifs</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'listusage' %}">Usages</a>
+                        <a class="dropdown-item" href="{% url 'listusage' %}">Utilisations</a>
                         <a class="dropdown-item" href="{% url 'listlocalisation' %}">Localisations</a>
-                        <a class="dropdown-item" href="{% url 'listmanufacturer' %}">Manufacturers</a>
+                        <a class="dropdown-item" href="{% url 'listmanufacturer' %}">Fabricants</a>
                     </div>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Administration</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'createmask' %}">Create mask</a>
+                        <a class="dropdown-item" href="{% url 'createmask' %}">Création d'un masque</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'createmotif' %}">Create motif</a>
-                        <a class="dropdown-item" href="{% url 'createmotiftype' %}">Create type of motif</a>
+                        <a class="dropdown-item" href="{% url 'createmotiftype' %}">Création d'un type de motif</a>
+                        <a class="dropdown-item" href="{% url 'createmotif' %}">Création un motif</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'createusage' %}">Create usage</a>
-                        <a class="dropdown-item" href="{% url 'createlocalisation' %}">Create localisation</a>
-                        <a class="dropdown-item" href="{% url 'createmanufacturer' %}">Create manufacturer</a>
+                        <a class="dropdown-item" href="{% url 'createusage' %}">Création d'un usage</a>
+                        <a class="dropdown-item" href="{% url 'createlocalisation' %}">Création d'une localisation</a>
+                        <a class="dropdown-item" href="{% url 'createmanufacturer' %}">Création d'un fabricant</a>
                     </div>
                 </li>
                 {% endif %}
@@ -242,13 +242,13 @@ Datatables
                     }
                 ],
                 colReorder: true,
-                select: true,
-#                columnDefs: [
-#                    {
-#                        targets: [0,2,3],
-#                        visible: false
-#                    }
-#                ]
+                select: true
+//                columnDefs: [
+//                    {
+//                        targets: [0,2,3],
+//                       visible: false
+//                    }
+//                ]
                }
             );
         } );

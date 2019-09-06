@@ -55,6 +55,12 @@ class genericListView(ListView):
 
         context['fields'] = fnames
         context['datas'] = self.get_queryset().values_list(*fields)
+
+        if self.model == Mask:
+            context['broken_masks'] = [i[0] for i in m.objects.filter(condition="broken").values_list("id")]
+        else:
+            context['broken_masks'] = []
+
         context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context

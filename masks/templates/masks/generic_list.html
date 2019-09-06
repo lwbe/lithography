@@ -13,16 +13,26 @@
         </tr>
     </thead>
     <tbody>
+
     {% for data in datas %}
         <tr>
             {% for value in data %}
+
             {% if forloop.first %}
             <td>
                 <a href="{% url detail_url value %}"> {{value}} </a>
             </td>
             {% else %}
 
-            <td>{{ value }}</td>
+                <td>
+                    {% if data.0 in broken_masks %}
+                        <span style="color:red">
+                            {{ value }}
+                        </span>
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </td>
             {% endif %}
             {% endfor %}
             {% if model != 'mask' %}

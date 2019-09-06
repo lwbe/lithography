@@ -85,6 +85,10 @@ class Manufacturer(models.Model):
                 'country',
                 'email']
 
+    class Meta:
+        verbose_name = "Fabricant"
+        verbose_name_plural = "Fabricants"
+
 
 class MotifType(models.Model):
     name = models.CharField(unique=True,
