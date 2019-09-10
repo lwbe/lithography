@@ -71,7 +71,7 @@ urlpatterns = [
          login_required(views.manufacturerCUView.as_view()),
          name='updatemanufacturer'),
     path('manufacturer/detail/<int:pk>/',
-         login_required(views.manufacturerCUView.as_view(extra_context={'type':'detail'})),
+         views.manufacturerCUView.as_view(extra_context={'type':'detail'}),
          name='detailmanufacturer'),
 
     path('masks',

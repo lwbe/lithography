@@ -14,10 +14,37 @@ def validate_int(value):
             params={'value': value},
         )
 
+# automate the creation of information about the model
+def create_cbv_info(d):
+    cbv_info = d
+    if not cbv_info.get('has_m2m'):
+        cbv_info['has_m2m']=False
+
+    # create an index and field_names entry in the dict
+    db_fields = [i[0] for i in d['field_info']]
+    fields_name = [i[1] for i in d['field_info']]
+    index_list = []
+    curr_index = 0
+    fnames_book = {}
+    fnames = []
+    for name in fields_name:
+        if name in fnames_book:
+            index_list.append(fnames_book[name])
+        else:
+            index_list.append(curr_index)
+            fnames_book[name] = curr_index
+            curr_index += 1
+            fnames.append(name)
+    if curr_index == len(fields_name):
+        index_list = None
+    cbv_info['field_indexes'] = index_list
+    cbv_info['field_names'] = fnames
+    cbv_info['db_fields'] = db_fields
+
+    return cbv_info
+
 
 # Create your models here.
-
-
 class About(models.Model):
     """
     a richtextfield that can only be editable from the admin page to give a help page.
@@ -36,29 +63,44 @@ class Usage(models.Model):
     comment = models.CharField(_("Comment"), max_length=1000)
 
     # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {
+        'title': 'Utilisations',
+        'field_info':
+            [
+                ('id', 'id'),
+                ('name', 'Nom'),
+                ('comment', 'Commentaire')
+            ]
+        }
+    )
+
     def __str__(self):
         return self.name
 
-    @classmethod
-    def get_available_fields(cls):
-        return ['id', 'name', 'comment']
 
-
+#--
 class Localisation(models.Model ):
     """
     Localisation a string to locate where is the mask 
     """
     localisation = models.CharField(_("Localisation"), max_length=100)
-    
+
+    # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {'title': 'Localisations',
+        'field_info':
+            [
+                ('id','id'),
+                ('localisation','Localisation')
+            ]
+        }
+    )
+
     def __str__(self):
         return self.localisation
 
-    @classmethod
-    def get_available_fields(cls):
-        return ['id', 'localisation']
-
-
-
+# --
 class Manufacturer(models.Model):
     """
     Manufacturer : the company that made the mask
@@ -70,26 +112,29 @@ class Manufacturer(models.Model):
     city = models.CharField(_("City"), max_length=100, default='', blank=True, null=True)
     country = models.CharField(_("Country"), max_length=100, default='', blank=True, null=True)
     email = models.EmailField(_("@mail"), max_length=100, default='', blank=True, null=True)
-    
+
+    # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {'title': 'Fabricants',
+        'field_info':
+            [
+                ('id','id'),
+                ('corporateName','Nom'),
+                ('address1','Adresse'),
+                ('address2','Adresse'),
+                ('postcode','Code Postal'),
+                ('city','Ville'),
+                ('country','Pays'),
+                ('email','Courriel')
+                ]
+        }
+    )
+
     def __str__(self):
         return self.corporateName
 
-    @classmethod
-    def get_available_fields(cls):
-        return ['id',
-                'corporateName',
-                'address1',
-                'address2',
-                'postcode',
-                'city',
-                'country',
-                'email']
 
-    class Meta:
-        verbose_name = "Fabricant"
-        verbose_name_plural = "Fabricants"
-
-
+# --
 class MotifType(models.Model):
     name = models.CharField(unique=True,
                             max_length=255,
@@ -98,9 +143,10 @@ class MotifType(models.Model):
                             )
 
     MAX_PARAM_NB = 10
-    PARAM_NB=([(i,str(i)) for i in range(1,MAX_PARAM_NB)])
-    nb_parameters = models.IntegerField(verbose_name="the number of parameters",choices=PARAM_NB,default=1)
-    #parameters_name=ArrayField(models.CharField(max_length=255))
+    PARAM_NB = ([(i, str(i)) for i in range(1, MAX_PARAM_NB)])
+    nb_parameters = models.IntegerField(verbose_name="the number of parameters",
+                                        choices=PARAM_NB,
+                                        default=1)
 
     # very basic way to handle a certain number of fields better use FK but the form can be simple using some javascript.
     param_name_0 = models.CharField(_("First parameter name"), max_length=255)
@@ -122,24 +168,35 @@ class MotifType(models.Model):
     def __str__(self):
         return self.name
 
-    @classmethod
-    def get_available_fields(cls):
-        return ['id',
-                'name',
-                'nb_parameters',
-                'param_name_0',
-                'comment']
+    # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {'title': 'Type de motifs',
+        'field_info': [
+            ('id', 'id'),
+            ('name', 'Nom'),
+            ('nb_parameters','Nb de paramètres'),
+            ('param_name_0', 'Paramètre(s)'),
+            ('param_name_1', 'Paramètre(s)'),
+            ('param_name_2', 'Paramètre(s)'),
+            ('param_name_3', 'Paramètre(s)'),
+            ('param_name_4', 'Paramètre(s)'),
+            ('param_name_5', 'Paramètre(s)'),
+            ('param_name_6', 'Paramètre(s)'),
+            ('param_name_7', 'Paramètre(s)'),
+            ('param_name_8', 'Paramètre(s)'),
+            ('param_name_9', 'Paramètre(s)'),
+            ('comment', 'Commentaire')
+            ]
+        }
+    )
 
 
-
-
+# --
 class Motif(models.Model):
     name = models.CharField(unique=True,
                             max_length=255)
     type = models.ForeignKey(MotifType,on_delete=models.CASCADE)
     step = models.FloatField(_("Step"))
-    #values = ArrayField(models.FloatField(blank=True))
-
     value_0 = models.FloatField(_("First parameter"))
     value_1 = models.FloatField(_("Second parameter"), blank=True, null=True)
     value_2 = models.FloatField(_("Third parameter"), blank=True, null=True)
@@ -151,21 +208,33 @@ class Motif(models.Model):
     value_8 = models.FloatField(_("Ninth parameter"), blank=True, null=True)
     value_9 = models.FloatField(_("Tenth parameter"),  blank=True, null=True)
 
-    def __str__(self):
-        return self.name
+    # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {'title': 'Motifs',
+        'field_info':[
+            ('id','id'),
+            ('name','Nom'),
+            ('type','Type'),
+            ('step','Pas'),
+            ('value_0', 'Valeur'),
+            ('value_1', 'Valeur'),
+            ('value_2', 'Valeur'),
+            ('value_3', 'Valeur'),
+            ('value_4', 'Valeur'),
+            ('value_5', 'Valeur'),
+            ('value_6', 'Valeur'),
+            ('value_7', 'Valeur'),
+            ('value_8', 'Valeur'),
+            ('value_9', 'Valeur'),
+            ]
+        }
+    )
 
     def get_values(self):
         return ", ".join([j for i,j in vars(self).items() if (i.startswith('value') and j)])
 
-    @classmethod
-    def get_available_fields(cls):
-        return ['id',
-                'name',
-                'type',
-                'step',
-                'value_0']
-
-
+    def __str__(self):
+        return self.name
 
 def default_id_number():
     ids = sorted([int(i) for i in list(Mask.objects.all().values_list('idNumber',flat=True))])
@@ -177,9 +246,13 @@ def default_id_number():
     return "%04d" % (i+1)
 
 
+# --
 class Mask(models.Model):
-
-    polarisationChoices = (('---', 'Select'), ('Positif', 'Positif'), ('Negatif', 'Negatif'))
+    polarisationChoices = (
+        ('---', 'Select'),
+        ('Positif', 'Positif'),
+        ('Negatif', 'Negatif')
+    )
     conditionChoices = (
         (_('new'), _('new')),
         (_('good'), _('good')),
@@ -204,27 +277,31 @@ class Mask(models.Model):
     description = models.TextField(_("Description"), default='', blank=True, null=True)
     area = models.FloatField(_("Area"), default= 0.0,blank=True, null=True)
 
+    # needed for CBV
+    cbv_model_info = create_cbv_info(
+        {'title': 'Masques',
+        'field_info': [
+            ('id', 'id'),
+            ('idNumber', 'Identifiant'),
+            ('name', 'Nom'),
+            ('motifs__name', 'Motif'),
+            ('usage__name', 'Utilisation'),
+            ('localisation__localisation', 'Localisation'),
+            ('manufacturer__corporateName', 'Fabricant'),
+            ('conceptor', 'Créateur'),
+            ('level', 'Niveau'),
+            ('creationYear', 'Année de création'),
+            ('GDSFile', 'Fichier GDS'),
+            ('condition', 'Etats'),
+            ('polarisation', 'Polarisation'),
+            ('area', 'Aire'),
+            ('description', 'Description')],
+         'has_m2m':True
+         }
+    )
+
     def __str__(self):
         return self.name
-
-    @classmethod
-    def get_available_fields(cls):
-        return ['id',
-                'idNumber',
-                'name',
-                'motifs__name',
-                'usage__name',
-                'localisation__localisation',
-                'manufacturer__corporateName',
-                'conceptor',
-                'level',
-                'creationYear',
-                'GDSFile',
-                'condition',
-                'polarisation',
-                'area',
-                'description']
-
 
 
 class Image(models.Model):

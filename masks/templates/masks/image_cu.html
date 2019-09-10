@@ -1,6 +1,7 @@
 
 {% extends "base.html" %}
 {% load static %}
+{% load thumbnail %}
 
 {% block content %}
 
@@ -63,7 +64,9 @@
     {% for image in images %}
       <tr>
         <td>
-          <a href="{{ image.image.url }}">{{ image.image.name }}</a>
+          <a href="{{ image.image.url }}">
+            <img src="{{ image.image|thumbnail_url:'avatar' }}" alt="{{ image.image.name }}" />
+          </a>
           <label for={{ image.id }} >Delete</label>
 
           <input type="checkbox" id="{{ image.id }}" name="imagetodelete" value="{{ image.id }}" />

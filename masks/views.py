@@ -44,14 +44,90 @@ class genericListView(ListView):
         context = super().get_context_data(**kwargs)
         # adding some value to the context
         m = self.model
+        model_info = m.cbv_model_info
 
-        context['title']  = m._meta.verbose_name_plural.capitalize()
-        context['model']  = m._meta.verbose_name
+        context['title'] = model_info['title']
+        context['model'] = m._meta.verbose_name
+
         # fields should be set in the model by a function called
         # get_available_fields
-        fields = m.get_available_fields()
+        context['fields'] = model_info['field_names']
 
-        fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
+        field_data = self.get_queryset().values_list(*model_info['db_fields'])
+
+        # getting the data and shaping them if needed
+        context['datas'] = []
+
+        indexes_list = model_info['field_indexes']
+
+        # concatenate m2m values
+        if model_info['has_m2m']:
+            d, list_id = [], []
+            for i in field_data:
+                if i[0] in list_id:
+                    ii = list_id.index(i[0])
+                    for k, j in enumerate(i):
+                        if d[ii][k] != str(j):
+                            d[ii][k] += ", "+str(j)
+                else:
+                    list_id.append(i[0])
+                    d.append([str(j) for j in i])
+            field_data = d
+
+
+        if indexes_list:
+            for d in field_data:
+                data_line = ['']*(max(indexes_list)+1)
+                for i,j in zip(indexes_list,d):
+
+                    if data_line[i] == '':
+                        data_line[i] = str(j)
+                    else:
+                        if j:
+                            data_line[i] += ", "+str(j)
+                context['datas'].append(data_line)
+        else:
+            context['datas'] =  field_data
+
+
+        # we gather m2m values (in case of m2m we have several queryset with the same
+        # id.
+        comment="""
+        context['datas']= []
+        for d in datas:
+            data_line = ['']*last_index
+            for i in range(len(index_list)):
+
+                index= index_list[i]
+                print(index,last_index,d[i])
+                if data_line[index] == '':
+                    data_line[index] = str(d[i])
+                else:
+                    if d[i]:
+                        data_line[index] += ", "+str(d[i])
+
+            print(data_line)
+            context['datas'].append(data_line)
+        """
+
+        if self.model == Mask:
+            context['broken_masks'] = [i[0] for i in m.objects.filter(condition="broken").values_list("id")]
+        else:
+            context['broken_masks'] = []
+
+        context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
+        context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
+        return context
+
+
+        context['title'] = m._meta.verbose_name_plural.capitalize()
+        context['model'] = m._meta.verbose_name
+        # fields should be set in the model by a function called
+        # get_available_fields
+        fields_info = m.get_available_fields()
+        fields = [i[0] for i in fields_info]
+        fnames = [i[1] for i in fields_info]
+        #fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
 
         context['fields'] = fnames
         context['datas'] = self.get_queryset().values_list(*fields)
@@ -124,21 +200,12 @@ class maskListView(genericListView):
         else:
             return super().get_queryset()
 
-    def get_context_data(self,**kwargs):
+    def get_context2_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        # adding some value to the context
-        m = self.model
+        # for mask we need to show a complete list of motif as a string
 
-        context['title']  = m._meta.verbose_name_plural.capitalize()
-        context['model']  = m._meta.verbose_name
-        # fields should be set in the model by a function called
-        # get_available_fields
-        fields = m.get_available_fields()
+        fields =[i[0] for i in  self.model.get_available_fields()]
 
-        fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
-
-        context['fields'] = fnames
-        #context['datas'] = \
         values_list = self.get_queryset().values_list(*fields)
         l = []
 
@@ -146,7 +213,9 @@ class maskListView(genericListView):
             cur_list = list(values_list[0])
             cur_index = cur_list[0]
 
-            index_m2m = [fnames.index('motifs')]
+            # we get the index of motif_name in the list of field to extract the names
+            # of the motifs
+            index_m2m = [fields.index('motifs__name')]
 
             for i in values_list[1:]:
                 if i[0] != cur_index:
@@ -159,9 +228,8 @@ class maskListView(genericListView):
             # we add the last element
             l.append(cur_list)
 
+        # we overide the key data in the context.
         context['datas'] = l
-        context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
-        context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
 
 class maskDetailView(DetailView):
@@ -325,7 +393,7 @@ class motifCUView(genericCreateUpdateView):
 # MotifType class stuff
 #----------------------------------------------------------------------------------
 class motifTypeListView(genericListView):
-    template_name = "motiftype_list.html"
+    #template_name = "motiftype_list.html"
     model = MotifType
 
 class motifTypeCUView(genericCreateUpdateView):

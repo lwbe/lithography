@@ -26,7 +26,7 @@
             <td> Motif </td>
             <td>
                 {%  for m in mask.motifs.all %}
-                    <a href="{% url 'updatemotif' m.id  %}"> {{m.name }} </a>
+                    <a href="{% url 'detailmotif' m.id  %}"> {{m.name }} </a>
                     <br>
                 {% endfor %}
             </td>
