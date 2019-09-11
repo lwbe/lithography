@@ -254,10 +254,10 @@ class Mask(models.Model):
         ('Negatif', 'Negatif')
     )
     conditionChoices = (
-        (_('new'), _('new')),
-        (_('good'), _('good')),
-        (_('bad'), _('bad')),
-        (_('broken'), _('broken')),
+        (_('Nouveau'), _('Nouveau')),
+        (_('Bon'), _('Bon')),
+        (_('Mauvais'), _('Mauvais')),
+        (_('Cassé'), _('Cassé')),
     )
 
     name = models.CharField(unique=True, max_length=255)

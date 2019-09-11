@@ -20,7 +20,11 @@
 
             {% if forloop.first %}
             <td>
-                <a href="{% url detail_url value %}"> {{value}} </a>
+                {% if data.0 in broken_masks %}
+                    {{ value }}
+                {% else %}
+                    <a href="{% url detail_url value %}"> {{value}} </a>
+                {% endif %}
             </td>
             {% else %}
 

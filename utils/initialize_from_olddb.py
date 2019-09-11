@@ -290,8 +290,12 @@ MasquesMotifstypes         MotifType
     #'[{"rank": 0, "name_of_field": "q"}, {"rank": 1, "name_of_field": "qq"}]'
 
     for mt in MasquesMotifstypes().select():
-        if mt.nb_dim == 1:
-            MotifType.objects.create(name=mt.nom, nb_parameters=mt.nb_dim, comment=mt.description, param_name_0='largeur')
+        if mt.nom == "Carré":
+            MotifType.objects.create(name=mt.nom, nb_parameters=1, comment=mt.description,
+                                     param_name_0='largeur')
+        elif mt.nb_dim == 1:
+            MotifType.objects.create(name=mt.nom, nb_parameters=mt.nb_dim, comment=mt.description,
+                                     param_name_0='largeur')
         elif mt.nb_dim == 2:
             MotifType.objects.create(name=mt.nom, nb_parameters=mt.nb_dim, comment=mt.description, param_name_0='largeur',param_name_1='longueur')
         elif mt.nb_dim == 3:
@@ -375,7 +379,7 @@ MasquesMasques             Mask
         na=ma.nom
         if Mask.objects.filter(name=na):
             na=na+"_1"
-        nm=Mask.objects.create(condition='new' if ma.actif else 'broken',
+        nm=Mask.objects.create(condition='Nouveau' if ma.actif else 'Cassé',
                             creationYear=ma.anneecre,
                             conceptor=ma.concepteur,
                             description=ma.description,

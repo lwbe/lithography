@@ -74,11 +74,10 @@ class genericListView(ListView):
                     d.append([str(j) for j in i])
             field_data = d
 
-
         if indexes_list:
             for d in field_data:
                 data_line = ['']*(max(indexes_list)+1)
-                for i,j in zip(indexes_list,d):
+                for i, j in zip(indexes_list,d):
 
                     if data_line[i] == '':
                         data_line[i] = str(j)
@@ -89,54 +88,11 @@ class genericListView(ListView):
         else:
             context['datas'] =  field_data
 
-
-        # we gather m2m values (in case of m2m we have several queryset with the same
-        # id.
-        comment="""
-        context['datas']= []
-        for d in datas:
-            data_line = ['']*last_index
-            for i in range(len(index_list)):
-
-                index= index_list[i]
-                print(index,last_index,d[i])
-                if data_line[index] == '':
-                    data_line[index] = str(d[i])
-                else:
-                    if d[i]:
-                        data_line[index] += ", "+str(d[i])
-
-            print(data_line)
-            context['datas'].append(data_line)
-        """
-
         if self.model == Mask:
-            context['broken_masks'] = [i[0] for i in m.objects.filter(condition="broken").values_list("id")]
+            context['broken_masks'] = [str(i[0]) for i in m.objects.filter(condition="Cassé").values_list("id")]
         else:
             context['broken_masks'] = []
-
-        context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
-        context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
-        return context
-
-
-        context['title'] = m._meta.verbose_name_plural.capitalize()
-        context['model'] = m._meta.verbose_name
-        # fields should be set in the model by a function called
-        # get_available_fields
-        fields_info = m.get_available_fields()
-        fields = [i[0] for i in fields_info]
-        fnames = [i[1] for i in fields_info]
-        #fnames = [m._meta.get_field(f.split('__')[0]).verbose_name for f in fields]
-
-        context['fields'] = fnames
-        context['datas'] = self.get_queryset().values_list(*fields)
-
-        if self.model == Mask:
-            context['broken_masks'] = [i[0] for i in m.objects.filter(condition="broken").values_list("id")]
-        else:
-            context['broken_masks'] = []
-
+        print("broken mask", context['broken_masks'])
         context['update_url'] = "update%s" % m._meta.verbose_name.replace(' ','')
         context['detail_url'] = "detail%s" % m._meta.verbose_name.replace(' ','')
         return context
