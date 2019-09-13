@@ -73,7 +73,7 @@
 
         </tbody>
     </table>
-
+<!--
     <div class="row">
         <div id="links">
             {% for image in mask.image_set.all %}
@@ -83,11 +83,21 @@
             {% endfor %}
         </div>
     </div>
+-->
+  <div class="row">
+      {% for image in mask.image_set.all %}
+          <a class='gallery' href={{ image.image.url }} title="{{ image.image.name }}" >
+              <img src="{{ image.image|thumbnail_url:'avatar' }}" alt="{{ image.image.name }}" />
+          </a>
+      {% endfor %}
+  </div>
 
 {% endblock %}
 
 
 {% block javascript %}
+
+
     <script src="{% static 'blueimpgallery/Gallery-master/js/blueimp-gallery.min.js' %}" ></script>
     <script>
         document.getElementById('links').onclick = function (event) {
@@ -98,5 +108,27 @@
                 links = this.getElementsByTagName('a');
             blueimp.Gallery(links, options);
         };
+    </script>
+
+    <script>
+    // display the image with the colorbox.js and wheelzoom.js jquery library
+
+        jQuery(document).ready(function () {
+            $('a.gallery').colorbox({
+                rel:'group1' ,
+                scalephotos:true,
+                maxWidth: '100%',
+                maxHeight:'100%',
+                onComplete:function(){
+                    // this will deactivate the click on the image to go to next
+                    // which is the standard colorbox behaviour but conflicts with
+                    // the fact that to drag the image in wheelzoom one needs to click and
+                    // stay clicked. see https://github.com/jackmoore/colorbox/issues/668
+                    $('.cboxPhoto').unbind('click');
+                    // activate wheelzoom on the image.
+                    wheelzoom(document.querySelectorAll('img'));
+                },
+            });
+        });
     </script>
 {% endblock %}

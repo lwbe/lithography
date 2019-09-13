@@ -24,7 +24,8 @@ Datatables
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
           crossorigin="anonymous">
-
+    <!-- colorbox http://www.jacklmoore.com/colorbox/-->
+    <link rel="stylesheet" href="{% static 'colorbox-master/colorbox.css' %}">
     <!--
     glyphicons ne sont plus livré avec bootstrap 4 et il faut donc passer par font awesome
     à priori on passe de l'un a l'autre en passant de glyphicons glyphicons- a fa fa
@@ -205,6 +206,12 @@ Datatables
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
+
+<!-- colorbox http://www.jacklmoore.com/colorbox/-->
+<script src="{% static 'colorbox-master/jquery.colorbox-min.js' %}" ></script>
+
+<!-- wheelzoom http://www.jacklmoore.com/wheelzoom/-->
+<script src="{% static 'wheelzoom-master/wheelzoom.js' %}" ></script>
 
 <!-- Datatables -->
 <script type="text/javascript" src="{%  static 'DataTables/datatables.min.js' %}"></script>
