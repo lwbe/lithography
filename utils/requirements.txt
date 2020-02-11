@@ -1,6 +1,6 @@
 backcall==0.1.0
 decorator==4.4.0
-Django==2.1.7
+Django==2.2.10
 django-ckeditor==5.6.1
 django-js-asset==1.2.2
 easy-thumbnails==2.6
