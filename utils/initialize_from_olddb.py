@@ -1,8 +1,16 @@
 from peewee import *
 
-MEDIA='../../OriginalData/media/'
+if len(sys.argv) != 2:
+    print("please give the directory where the old data are")
+
+
+#MEDIA='../../OriginalData/media/'
+#PATH_TO_MANAGE_PY="../"
+#PATH_TO_ORIGINAL_DB='../../OriginalData/masques.sqlite3'
+MEDIA=sys.argv[1]+"/media/"
 PATH_TO_MANAGE_PY="../"
-PATH_TO_ORIGINAL_DB='../../OriginalData/masques.sqlite3'
+PATH_TO_ORIGINAL_DB=sys.argv[1]+"/masques.sqlite3"
+
 
 database = SqliteDatabase(PATH_TO_ORIGINAL_DB, **{})
 
