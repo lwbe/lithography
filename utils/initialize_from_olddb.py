@@ -1,4 +1,5 @@
 from peewee import *
+import sys
 
 if len(sys.argv) != 2:
     print("please give the directory where the old data are")
