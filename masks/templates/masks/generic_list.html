@@ -1,85 +1,95 @@
 {% extends "base.html" %}
 {% block content %}
 <!--<div class="jumbotron text-white rounded bg-dark">
-  
-  <div  class="align-middle">-->
-    <div class="card my-3 bg-dark">
-      <div class="card-body">
-    <img src="/static/logos/lab_logo.jpg"
-	 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
-	 alt="Logo laboratoire"/>
-    
-    <a class="navbar-brand" href="{% url 'listmask' %}">
-      <p class="h1">
-      {% if model == 'mask' %}
-      Masques pour la lithographie optique
-      {% else %}
-      {{ title }}
-      {% endif %}
-      </p>
-    </a>
-    
-    <img class="float-right"
-	 src="/static/logos/service_logo.jpg"
-	 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
-	 alt="Logo service"/>
-  </div>
-</div>
+<div  class="align-middle">-->
+  <main role="main" class="container-fluid">
 
-<table id="example" class="table table-striped table-bordered" style="width:100%">
-    <thead>
-        <tr>
-            {% for field in fields %}      <th>{{ field }}</th>  {% endfor %}
-            {% if model != 'mask' %}       <th> Masks </th>      {% endif %}
-            {% if user.is_authenticated %} <th> Action(s) </th>  {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-
-    {% for data in datas %}
-        <tr>
-            {% for value in data %}
-
-            {% if forloop.first %}
-            <td>
+    <div class="row">
+      <div class="col-8 offset-2">
+	<div class="card my-3 bg-dark">
+	  <div class="card-body">
+	    <img src="/static/logos/lab_logo.jpg"
+		 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+		 alt="Logo laboratoire"/>
+	    
+	    <a class="navbar-brand" href="{% url 'listmask' %}">
+	      <p class="h1">
+		{% if model == 'mask' %}
+		Masques pour la lithographie optique
+		{% else %}
+		{{ title }}
+		{% endif %}
+	      </p>
+	    </a>
+	    
+	    <img class="float-right"
+		 src="/static/logos/service_logo.jpg"
+		 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+		 alt="Logo service"/>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+	
+	<table id="example" class="table table-striped table-bordered" style="width:100%">
+	  <thead>
+            <tr>
+              {% for field in fields %}      <th>{{ field }}</th>  {% endfor %}
+              {% if model != 'mask' %}       <th> Masks </th>      {% endif %}
+              {% if user.is_authenticated %} <th> Action(s) </th>  {% endif %}
+            </tr>
+	  </thead>
+	  <tbody>
+	    
+	    {% for data in datas %}
+            <tr>
+              {% for value in data %}
+	      
+              {% if forloop.first %}
+              <td>
                 {% if data.0 in broken_masks %}
-                    {{ value }}
+                {{ value }}
                 {% else %}
-                    <a href="{% url detail_url value %}"> {{value}} </a>
+                <a href="{% url detail_url value %}"> {{value}} </a>
                 {% endif %}
-            </td>
-            {% else %}
-
-                <td>
-                    {% if data.0 in broken_masks %}
+              </td>
+              {% else %}
+	      
+              <td>
+                {% if data.0 in broken_masks %}
                         <span style="color:red">
-                            {{ value }}
+                          {{ value }}
                         </span>
-                    {% else %}
+			{% else %}
                         {{ value }}
-                    {% endif %}
-                </td>
-            {% endif %}
-            {% endfor %}
+			{% endif %}
+              </td>
+              {% endif %}
+              {% endfor %}
             {% if model != 'mask' %}
-            <td>
+              <td>
                 <a  href="{% url "listmaskwithfield" model data.0  %}" > masks </a>
-            </td>
-            {% endif %}
-            {% if user.is_authenticated %}
-            <td>
+              </td>
+              {% endif %}
+              {% if user.is_authenticated %}
+              <td>
                 <a  href="{% url update_url data.0  %}" > Update </a>
-            </td>
-            {% endif %}
+              </td>
+              {% endif %}
         </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot>
-        <tr>
-            {% for field in fields %}      <th>{{ field }}</th>  {% endfor %}
-            {% if model != 'mask' %}       <th> Masks </th>      {% endif %}
-            {% if user.is_authenticated %} <th> Action(s) </th>  {% endif %}
-        </tr>
-    </tfoot>
-</table>
-{% endblock %}
+	    {% endfor %}
+	  </tbody>
+	  <tfoot>
+            <tr>
+              {% for field in fields %}      <th>{{ field }}</th>  {% endfor %}
+              {% if model != 'mask' %}       <th> Masks </th>      {% endif %}
+              {% if user.is_authenticated %} <th> Action(s) </th>  {% endif %}
+            </tr>
+	  </tfoot>
+	</table>
+      </div>
+    </div>
+  </main>
+	{% endblock %}
