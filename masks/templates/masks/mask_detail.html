@@ -4,10 +4,22 @@
 {% load mask_utils %}
 {% block content %}
   <main role="main" class="container">
-
-    <div class="jumbotron text-white rounded bg-dark">
-        <h1>Mask Detail</h1>
-    </div>
+	<div class="card my-3 bg-dark">
+	  <div class="card-body">
+	    <img src="/static/logos/lab_logo.jpg"
+		 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+		 alt="Logo laboratoire"/>
+	    
+	    <a class="navbar-brand" href="{% url 'listmask' %}">
+	      <p class="h1">Mask Detail</p>
+	    </a>
+	    
+	    <img class="float-right"
+		 src="/static/logos/service_logo.jpg"
+		 style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+		 alt="Logo service"/>
+	  </div>
+	</div>
 
     <table class="table">
         <tbody>

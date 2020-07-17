@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 <main role="main" class="container">
-
-  <div class="jumbotron text-white rounded bg-dark">
-    <h1>{{ title }}</h1>
+  <div class="card my-3 bg-dark">
+    <div class="card-body">
+      <img src="/static/logos/lab_logo.jpg"
+	   style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+	   alt="Logo laboratoire"/>
+      
+      <a class="navbar-brand" href="{% url 'listmask' %}">
+	<p class="h1">
+	  {% if model == 'mask' %}
+	  Masques pour la lithographie optique
+	  {% else %}
+	  {{ title }}
+	  {% endif %}
+	</p>
+      </a>
+      
+      <img class="float-right"
+	   src="/static/logos/service_logo.jpg"
+	   style="margin: 0px 10px 0px 0px; max-height: 150px; max-width: 150px;"
+	   alt="Logo service"/>
+    </div>
   </div>
   
   <form action="" method="post">
